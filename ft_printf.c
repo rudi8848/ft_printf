@@ -48,6 +48,45 @@ size_t	unicode_masks[BIT_MASKS] = {
 	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
 	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
 };
+
+int		write_two_bytes(size_t symb);
+
+pf 	p_putchar_unicode[BIT_MASKS];
+//p_putchar_unicode[ONE_B] = &write;
+p_putchar_unicode[TWO_B] = &write_two_bytes;
+//p_putchar_unicode[THREE_B] = &write_three_bytes;
+//p_putchar_unicode[FOUR_B] = &write_four_bytes;
+
+//узнаем количество бит в символе
+int size_bin(unsigned int symb)
+{
+  int res = 0;
+  while (symb > 0)
+  {
+    symb /=2;
+    res++;
+    }
+    return res;
+  }
+
+int		write_two_bytes(size_t symb)
+{
+	int res;
+	unsigned char o2;
+	unsigned char o1;
+	unsigned char octet;
+
+	res = 0;
+	o2 = (symb << 26) >> 26; // Восстановление первых 6 бит 110xxxxx 10(xxxxxx)
+	o1 = ((symb >> 6) << 27) >> 27; // Восстановление последних 5 бит 110(xxxxx) 10xxxxxx
+	octet = (unicode_masks[TWO_B] >> 8) | o1; // Применение первой битовой маски ко первому байту
+	write(1, &octet, 1);
+	res++;
+	octet = ((unicode_masks[TWO_B] << 24) >> 24) | o2; // Применение второй битовой маски ко второму байту
+	write(1, &octet, 1);
+	res++;
+	return (res);
+}
 /*
 **----------------------------------------------------------------------------------------------------------
 */
@@ -160,7 +199,7 @@ int main(void)
 	//wchar_t	*wstr = "фыва";
 	wchar_t a = L'а';
 
-	write(1, "э\n", 3);
+	write_two_bytes(a);
 	printf("%C\n", a);
 	printf("cur max: %d\n", MB_CUR_MAX);
 
