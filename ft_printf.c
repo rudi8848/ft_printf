@@ -52,10 +52,6 @@ size_t	unicode_masks[BIT_MASKS] = {
 int		write_two_bytes(size_t symb);
 
 pf 	p_putchar_unicode[BIT_MASKS];
-//p_putchar_unicode[ONE_B] = &write;
-p_putchar_unicode[TWO_B] = &write_two_bytes;
-//p_putchar_unicode[THREE_B] = &write_three_bytes;
-//p_putchar_unicode[FOUR_B] = &write_four_bytes;
 
 //узнаем количество бит в символе
 int size_bin(unsigned int symb)
@@ -69,6 +65,12 @@ int size_bin(unsigned int symb)
     return res;
   }
 
+int		write_one_byte(int c)
+{
+	write(1, &c, 1);
+	return (1);
+}
+
 int		write_two_bytes(size_t symb)
 {
 	int res;
@@ -77,16 +79,92 @@ int		write_two_bytes(size_t symb)
 	unsigned char octet;
 
 	res = 0;
-	o2 = (symb << 26) >> 26; // Восстановление первых 6 бит 110xxxxx 10(xxxxxx)
-	o1 = ((symb >> 6) << 27) >> 27; // Восстановление последних 5 бит 110(xxxxx) 10xxxxxx
-	octet = (unicode_masks[TWO_B] >> 8) | o1; // Применение первой битовой маски ко первому байту
+	o2 = (symb << 26) >> 26;
+	o1 = ((symb >> 6) << 27) >> 27;
+	octet = (unicode_masks[TWO_B] >> 8) | o1;
 	write(1, &octet, 1);
 	res++;
-	octet = ((unicode_masks[TWO_B] << 24) >> 24) | o2; // Применение второй битовой маски ко второму байту
+	octet = ((unicode_masks[TWO_B] << 24) >> 24) | o2;
 	write(1, &octet, 1);
 	res++;
 	return (res);
 }
+
+int		write_three_bytes(size_t symb)
+{
+	int res;
+	unsigned char o3;
+	unsigned char o2;
+	unsigned char o1;
+	unsigned char octet;
+
+	res = 0;
+	o3 = (symb << 26) >> 26;
+	o2 = ((symb >> 6) << 26) >> 26;
+	o1 = ((symb >> 12) << 28) >> 28;
+	octet = (unicode_masks[THREE_B] >> 16) | o1;
+	write(1, &octet, 1);
+	res++;
+	octet = ((unicode_masks[THREE_B] << 16) >> 24) | o2;
+	write(1, &octet, 1);
+	octet = ((unicode_masks[THREE_B] << 24) >> 24) | o3;
+	write(1, &octet, 1);
+	res++;
+	return (res);
+}
+
+int		write_four_bytes(size_t symb)
+{
+	int res;
+	unsigned char o4;
+	unsigned char o3;
+	unsigned char o2;
+	unsigned char o1;
+	unsigned char octet;
+
+	res = 0;
+	o4 = (symb << 26) >> 26;
+	o3 = ((symb >> 6) << 26) >> 26;
+	o2 = ((symb >> 12) << 26) >> 26;
+	o1 = ((symb >> 18) << 29) >> 29;
+
+	octet = (unicode_masks[FOUR_B] >> 24) | o1;
+	write(1, &octet, 1);
+	res++;
+	octet = ((unicode_masks[FOUR_B] << 8) >> 24) | o2;
+	write(1, &octet, 1);
+	res++;
+	octet = ((unicode_masks[FOUR_B] << 16) >> 24) | o3;
+	write(1, &octet, 1);
+	res++;
+	octet = ((unicode_masks[FOUR_B] << 24) >> 24) | o4;
+	write(1, &octet, 1);
+	res++;
+	return (res);
+}
+
+int		print_wstr(int *wstr)
+{
+	int i;
+	int size;
+	pf print;
+
+	i = 0;
+	size = size_bin(wstr[i]);
+	if (size == TWO_B)
+		print = p_putchar_unicode[TWO_B];
+	else if (size == THREE_B)
+		print = p_putchar_unicode[THREE_B];
+	else
+		print = p_putchar_unicode[FOUR_B];
+	while (wstr[i] != L'\0')
+	{
+		print(wstr[i]);
+		i++;
+	}
+	return (i);
+}
+
 /*
 **----------------------------------------------------------------------------------------------------------
 */
@@ -197,17 +275,43 @@ int main(void)
 
 	//char	*str = "qwerty";
 	//wchar_t	*wstr = "фыва";
-	wchar_t a = L'а';
-
-	write_two_bytes(a);
-	printf("%C\n", a);
+	char d = 'b';
+	wchar_t a = L'Ы';
+	wchar_t b = L'ࢢ';
+	wchar_t c = L'𐄂';
+//printf("%lu\n", sizeof(wchar_t));
 	printf("cur max: %d\n", MB_CUR_MAX);
+
+	int *wstr = "привет";
+	print_wstr(wstr);
 
 	pf p_convert_functions[CONVERSIONS];
 
 	p_convert_functions[CONV_x] = &print_hex_low;
 	p_convert_functions[CONV_X] = &print_hex_upper;
 	p_convert_functions[CONV_o] = &print_oct;
+
+
+
+
+	p_putchar_unicode[ONE_B] = &write_one_byte;
+	p_putchar_unicode[TWO_B] = &write_two_bytes;
+	p_putchar_unicode[THREE_B] = &write_three_bytes;
+	p_putchar_unicode[FOUR_B] = &write_four_bytes;
+
+	p_putchar_unicode[ONE_B](d);
+	printf("\n" );
+
+	p_putchar_unicode[TWO_B](a);
+	printf("\n" );
+
+	p_putchar_unicode[THREE_B](b);
+	printf("\n" );
+
+	p_putchar_unicode[FOUR_B](c);
+	printf("\n" );
+
+
 
 	i = p_convert_functions[CONV_x](x);
 	ft_putchar('\n');

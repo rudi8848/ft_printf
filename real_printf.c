@@ -27,6 +27,19 @@
 						ширина управляющей последовательности, символом 0			дополнять пробелами								Используется для типов d, i, o, u, x, X, a, A, e, E, f, F, g, G. Для типов d, i, o, u, x, X, если точность указана, этот флаг игнорируется. Для остальных типов поведение не определено.
 
 
+
+					__printf (const char *format, ...)
+					{
+					   va_list arg;
+					   int done;
+					 
+					   va_start (arg, format);
+					   done = vfprintf (stdout, format, arg);
+					   va_end (arg);
+					 
+					   return done;
+					}
+
 */
 
 
@@ -37,7 +50,10 @@ int		main(void)
 	char *str2 = "こんにちは";
 
 	int		number = 2579;
-	int		ret;
+	int		negnumber = -2579;
+	float 	f = 1.23;
+	float 	nf = -1.23;
+/*	int		ret;
 
 	printf("%d\n", MB_CUR_MAX);
 	ret = printf("s: %25s\n", str);
@@ -52,7 +68,6 @@ int		main(void)
 	printf("ret is: %d\n", ret);
 	printf("------------------------------------------------\n");
 
-	/*
 	real_printf.c:43:26: warning: format specifies type 'wchar_t *' (aka 'int *') but the argument has type
       'char *' [-Wformat]
         ret = printf("S: %S\n", str);
@@ -61,7 +76,6 @@ int		main(void)
 	ret = printf("S: %S\n", str);
 	printf("ret is: %d\n", ret);
 	printf("------------------------------------------------\n");
-	*/
 
 	ret = printf("p: %p\n", &str);
 	printf("ret is: %d\n", ret);
@@ -111,6 +125,99 @@ int		main(void)
 	printf("ret is: %d\n", ret);
 	printf("------------------------------------------------\n");
 
+*/
 
+	//------------------------------------------
+	printf("флаги,ширина и точность\n");
+	//------------------------------------------
+
+	printf("width -30: |%-30s|\n", str1);
+	printf("width 30: |%30s|\n", str1);
+	printf("precision 4: |%.4s|\n", str1);
+	printf("precision 4, width: |%30.4s|\n", str1);
+	printf("no: |%s|\n", str1);
+	printf("\n");
+
+	printf("no:   |%d|\n", number);
+	printf("no:   |%d|\n", negnumber);
+	printf("no:   |%f|\n", f);
+	printf("no:   |%f|\n", nf);
+		printf("\n");
+
+	printf("width:   |%30d|\n", number);
+	printf("width:   |%30d|\n", negnumber);
+	printf("width:   |%30f|\n", f);
+	printf("width:   |%30f|\n", nf);
+		printf("\n");
+
+	printf("+:   |%+d|\n", number);
+	printf("+:   |%+d|\n", negnumber);
+	printf("+:   |%+f|\n", f);
+	printf("+:   |%+f|\n", nf);
+		printf("\n");
+
+	printf("+, width:   |%+30d|\n", number);
+	printf("+, width:   |%+30d|\n", negnumber);
+	printf("+, width:   |%+30f|\n", f);
+	printf("+, width:   |%+30f|\n", nf);
+		printf("\n");
+
+	printf("+, -, width:   |%+-30d|\n", number);
+	printf("+, -, width:   |%+-30d|\n", negnumber);
+	printf("+, -, width:   |%+-30f|\n", f);
+	printf("+, -, width:   |%+-30f|\n", nf);
+		printf("\n");
+
+	printf("space:   |% d|\n", number);
+	printf("space:   |% d|\n", negnumber);
+	printf("space:   |% f|\n", f);
+	printf("space:   |% f|\n", nf);
+		printf("\n");
+
+	printf("precision:   |%.1f|\n", f);
+	printf("precision:   |%.1f|\n", nf);
+		printf("\n");
+
+	printf("0:   |%0d|\n", number);
+	printf("0:   |%0d|\n", negnumber);
+	printf("0:   |%0f|\n", f);
+	printf("0:   |%0f|\n", nf);
+		printf("\n");
+
+	printf("0, width:   |%030d|\n", number);
+	printf("0, width:   |%030d|\n", negnumber);
+	printf("0, width:   |%030f|\n", f);
+	printf("0, width:   |%030f|\n", nf);
+		printf("\n");
+
+	printf("0, space, width:   |%0 30d|\n", number);
+	printf("0, space, width:   |%0 30d|\n", negnumber);
+	printf("0, space, width:   |%0 30f|\n", f);
+	printf("0, space, width:   |%0 30f|\n", nf);
+		printf("\n");
+
+	printf("0, +, width:   |%0+30d|\n", number);
+	printf("0, +, width:   |%0+30d|\n", negnumber);
+	printf("0, +, width:   |%0+30f|\n", f);
+	printf("0, +, width:   |%0+30f|\n", nf);
+		printf("\n");
+
+	printf("x:   |%x|\n", number);
+	printf("x:   |%x|\n", negnumber);
+	printf("a, width:   |%a|\n", f);
+	printf("a, width:   |%a|\n", nf);
+		printf("\n");
+
+	printf("#x:   |%#x|\n", number);
+	printf("#x:   |%#x|\n", negnumber);
+	printf("#a, width:   |%#a|\n", f);
+	printf("#a, width:   |%#a|\n", nf);
+		printf("\n");
+
+	printf("#o:   |%#o|\n", number);
+	printf("#o:   |%#o|\n", negnumber);
+	printf("A, width:   |%A|\n", f);
+	printf("A, width:   |%A|\n", nf);
+		printf("\n");
 	return 0;
 }
