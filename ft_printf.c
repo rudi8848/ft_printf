@@ -270,6 +270,9 @@ int		ft_printf(const char *format, ...)
 	return (0);
 }
 
+/*
+**------------------------------------------MAIN------------------------------------------------------------
+*/
 
 int main(void)
 {
@@ -425,11 +428,11 @@ int		print_wstr(int *wstr)
 	len = ft_wstrlen(wstr);
 	printf("in print wstr, len: %zu\n", len);
 	if (size <= 15)
-		print = &write_two_bytes; //p_putchar_unicode[TWO_B];
+		print = &write_two_bytes; //p_putchar_unicode[TWO_B] -- segmentation fault;
 	else if (size <= 31)
-		print = p_putchar_unicode[THREE_B];
+		print = &write_three_bytes;
 	else
-		print = p_putchar_unicode[FOUR_B];
+		print = &write_four_bytes;
 	while (i < len)
 	{
 		//printf("in loop %zu\n", i);
