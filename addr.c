@@ -1,7 +1,9 @@
 #include "libft.h"
 #include <stdio.h>
 
-int		print_hex_low(int n)
+
+
+int		print_hex_low(size_t n)
 {
 	int		i;
 
@@ -24,24 +26,18 @@ int		print_hex_low(int n)
 	return (i);
 }
 
-void
-print_ptr(void *p)
+int		print_pointer_addr(size_t pointer)
 {
-        unsigned char t[sizeof(p)];
-        size_t i;
-
-        memcpy(t, &p, sizeof(p));
-        for (i = 0; i < sizeof(p); ++i) {
-                printf("%02x", t[i]);
-        }
+	ft_putstr("0x");
+	print_hex_low(pointer);
+	return (1);
 }
 
 int		main(void)
 {
-	int a = 126;
-	//printf("%lu\n", sizeof(&a));
-	//printf("%d\n", print_addr(&a));
-	print_ptr(&a);
-	printf("\n %p\n", &a);
+	char *a = "qwert";
+
+	print_pointer_addr((size_t)&a);
+	printf("\n%p\n", &a);
 	return 0;
 }

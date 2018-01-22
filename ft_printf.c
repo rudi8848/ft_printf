@@ -1,10 +1,19 @@
 #include "libft.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <locale.h>
+#include <wchar.h>
 
 /*
 		ФОРМАТ:
 		%[флаги][ширина][.точность][размер]тип
+
+		 то есть при разборе строки после знака %
+		 проверяем сначала на флаги,
+		 ширина
+		 точность
+		 размер
+		 тип 
 */
 
 typedef		int(*pf)();
@@ -53,8 +62,10 @@ int		write_two_bytes(size_t symb);
 
 pf 	p_putchar_unicode[BIT_MASKS];
 
+
+
 //узнаем количество бит в символе
-int size_bin(unsigned int symb)
+int size_bin(size_t symb)
 {
   int res = 0;
   while (symb > 0)
@@ -67,12 +78,14 @@ int size_bin(unsigned int symb)
 
 int		write_one_byte(int c)
 {
+	//printf("%s\n", __FUNCTION__);
 	write(1, &c, 1);
 	return (1);
 }
 
 int		write_two_bytes(size_t symb)
 {
+	//printf("%s\n", __FUNCTION__);
 	int res;
 	unsigned char o2;
 	unsigned char o1;
@@ -92,6 +105,7 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
+	//printf("%s\n", __FUNCTION__);
 	int res;
 	unsigned char o3;
 	unsigned char o2;
@@ -115,6 +129,7 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
+	//printf("%s\n", __FUNCTION__);
 	int res;
 	unsigned char o4;
 	unsigned char o3;
@@ -142,28 +157,8 @@ int		write_four_bytes(size_t symb)
 	res++;
 	return (res);
 }
+int		print_wstr(int *wstr);
 
-int		print_wstr(int *wstr)
-{
-	int i;
-	int size;
-	pf print;
-
-	i = 0;
-	size = size_bin(wstr[i]);
-	if (size == TWO_B)
-		print = p_putchar_unicode[TWO_B];
-	else if (size == THREE_B)
-		print = p_putchar_unicode[THREE_B];
-	else
-		print = p_putchar_unicode[FOUR_B];
-	while (wstr[i] != L'\0')
-	{
-		print(wstr[i]);
-		i++;
-	}
-	return (i);
-}
 
 /*
 **----------------------------------------------------------------------------------------------------------
@@ -205,7 +200,7 @@ int		print_oct(int n)
 	return (i);
 }
 
-int		print_hex_low(int n)
+int		print_hex_low(size_t n)
 {
 	int		i;
 
@@ -228,7 +223,7 @@ int		print_hex_low(int n)
 	return (i);
 }
 
-int		print_hex_upper(int n)
+int		print_hex_upper(size_t n)
 {
 	int		i;
 
@@ -251,6 +246,13 @@ int		print_hex_upper(int n)
 	return (i);
 }
 
+int		print_pointer_addr(size_t ap)
+{
+	ft_putstr("0x");
+	print_hex_low(ap);
+	return (1);
+}
+//void	parse_string(char **str)
 
 /*
 **----------------------------------------------------------------------------------------------------------
@@ -260,6 +262,8 @@ int		ft_printf(const char *format, ...)
 {
 	va_list		args;
 	va_start(args, format);
+
+	//parse_string(&format)
 
 
 
@@ -282,7 +286,7 @@ int main(void)
 //printf("%lu\n", sizeof(wchar_t));
 	printf("cur max: %d\n", MB_CUR_MAX);
 
-	int *wstr = "привет";
+	int *wstr = L"привет";
 	print_wstr(wstr);
 
 	pf p_convert_functions[CONVERSIONS];
@@ -290,6 +294,7 @@ int main(void)
 	p_convert_functions[CONV_x] = &print_hex_low;
 	p_convert_functions[CONV_X] = &print_hex_upper;
 	p_convert_functions[CONV_o] = &print_oct;
+	p_convert_functions[CONV_p] = &print_pointer_addr;
 
 
 
@@ -324,8 +329,14 @@ int main(void)
 	i = p_convert_functions[CONV_o](x);
 	ft_putchar('\n');
 
+	p_convert_functions[CONV_p](&x);
+	ft_putchar('\n');
+	printf("%p\n\n", &x);
+
 	printf("%i\n", i);
 	printf("%zu\n", unicode_masks[TWO_B]);
+
+
 
 	/*char *ptr = "Hello world!";
 	char *np = 0;
@@ -383,4 +394,47 @@ int main(void)
 	printf("original: %d %s(s) with %%\n", 0, "message");
 	*/
 	return 0;
+}
+
+size_t	ft_wstrlen(int *wstr)
+{
+	printf("in wstrlen\n");
+	int size;
+	size_t len = 0;
+	int i = 0;
+
+	size = size_bin(wstr[i]);
+	
+	while (*wstr)
+	{
+		wstr++;
+		len++;
+	}
+	return len;
+}
+
+int		print_wstr(int *wstr)
+{
+	size_t i;
+	int size;
+	size_t len;
+	pf print;
+
+	i = 0;
+	size = size_bin(wstr[i]);
+	len = ft_wstrlen(wstr);
+	printf("in print wstr, len: %zu\n", len);
+	if (size <= 15)
+		print = &write_two_bytes; //p_putchar_unicode[TWO_B];
+	else if (size <= 31)
+		print = p_putchar_unicode[THREE_B];
+	else
+		print = p_putchar_unicode[FOUR_B];
+	while (i < len)
+	{
+		//printf("in loop %zu\n", i);
+		print(wstr[i]);
+		i++;
+	}
+	return (i);
 }
