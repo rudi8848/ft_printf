@@ -67,6 +67,7 @@ pf 	p_putchar_unicode[BIT_MASKS];
 //узнаем количество бит в символе
 int size_bin(size_t symb)
 {
+	printf("-------------->%s\n", __FUNCTION__);
   int res = 0;
   while (symb > 0)
   {
@@ -78,14 +79,14 @@ int size_bin(size_t symb)
 
 int		write_one_byte(int c)
 {
-	//printf("%s\n", __FUNCTION__);
+	printf("-------------->%s\n", __FUNCTION__);
 	write(1, &c, 1);
 	return (1);
 }
 
 int		write_two_bytes(size_t symb)
 {
-	//printf("%s\n", __FUNCTION__);
+	printf("-------------->%s\n", __FUNCTION__);
 	int res;
 	unsigned char o2;
 	unsigned char o1;
@@ -105,7 +106,7 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
-	//printf("%s\n", __FUNCTION__);
+	printf("-------------->%s\n", __FUNCTION__);
 	int res;
 	unsigned char o3;
 	unsigned char o2;
@@ -129,7 +130,7 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
-	//printf("%s\n", __FUNCTION__);
+	printf("-------------->%s\n", __FUNCTION__);
 	int res;
 	unsigned char o4;
 	unsigned char o3;
@@ -181,6 +182,7 @@ typedef		enum
 
 int		print_oct(int n)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -202,6 +204,7 @@ int		print_oct(int n)
 
 int		print_hex_low(size_t n)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -225,6 +228,7 @@ int		print_hex_low(size_t n)
 
 int		print_hex_upper(size_t n)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -248,26 +252,105 @@ int		print_hex_upper(size_t n)
 
 int		print_pointer_addr(size_t ap)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 	ft_putstr("0x");
 	print_hex_low(ap);
 	return (1);
 }
 //void	parse_string(char **str)
 
+size_t	ft_wstrlen(wchar_t *wstr)
+{
+	printf("-------------->%s\n", __FUNCTION__);
+	int size;
+	size_t len = 0;
+	int i = 0;
+
+	size = size_bin(wstr[i]);
+	
+	while (*wstr++)
+		len++;
+	return (len);
+}
+
+int		print_wstr(wchar_t *wstr)
+{
+	printf("-------------->%s\n", __FUNCTION__);
+	size_t i;
+	int size;
+	size_t len;
+	pf print;
+
+	i = 0;
+	len = ft_wstrlen(wstr);	
+	printf("in print wstr, len: %zu\n", len);
+	while (i < len)
+	{
+	size = size_bin(wstr[i]);
+	
+	printf(" = %d\n", size);
+	if (size <= 7)
+		print = &write_one_byte;
+	else if (size <= 15)
+		print = &write_two_bytes; //p_putchar_unicode[TWO_B] -- segmentation fault;
+	else if (size <= 31)
+		print = &write_three_bytes;
+	else
+		print = &write_four_bytes;
+	
+		//printf("in loop %zu\n", i);
+		print(wstr[i]);
+		i++;
+	}
+	return (i);
+}
+
 /*
 **----------------------------------------------------------------------------------------------------------
 */
 
+void	test_print(const char *fmt, va_list *args)
+{
+	printf("-------------->%s\n", __FUNCTION__);
+	while (*fmt)
+	{
+		if (*fmt == '%')
+		{
+			if(++fmt == 's')
+			{
+				ft_putstr(args[1]);
+				fmt++;
+			}
+			else if (++fmt == 'X')
+			{
+				print_hex_upper(args[1]);
+				fmt++;
+			}
+			else if (++fmt == 'p')
+			{
+				print_pointer_addr(args[1]);
+				fmt++;
+			}
+		}
+		ft_putchar(*fmt++);
+	}
+}
+
+
+
 int		ft_printf(const char *format, ...)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 	va_list		args;
+	int			res = 0;
+
 	va_start(args, format);
 
-	//parse_string(&format)
+	test_print(format, &args);
 
 
-
-	return (0);
+	va_end(args);
+	return (res);
 }
 
 /*
@@ -276,7 +359,15 @@ int		ft_printf(const char *format, ...)
 
 int main(void)
 {
+	printf("-------------->%s\n", __FUNCTION__);
 
+	int x;
+	ft_printf("no args\n");
+	ft_printf("string: %s", "adsf");
+	ft_printf("pointer: %p", &x);
+	ft_printf("hex: %x", 1234);
+
+/*
 	int x = 125;
 	int i;
 
@@ -289,7 +380,7 @@ int main(void)
 //printf("%lu\n", sizeof(wchar_t));
 	printf("cur max: %d\n", MB_CUR_MAX);
 
-	int *wstr = L"привет";
+	wchar_t *wstr = L"привет, друг!!!";
 	print_wstr(wstr);
 
 	pf p_convert_functions[CONVERSIONS];
@@ -339,9 +430,10 @@ int main(void)
 	printf("%i\n", i);
 	printf("%zu\n", unicode_masks[TWO_B]);
 
+*/
 
-
-	/*char *ptr = "Hello world!";
+	/*
+	char *ptr = "Hello world!";
 	char *np = 0;
 	int i = 5;
 	unsigned int bs = sizeof(int)*8;
@@ -399,45 +491,3 @@ int main(void)
 	return 0;
 }
 
-size_t	ft_wstrlen(int *wstr)
-{
-	printf("in wstrlen\n");
-	int size;
-	size_t len = 0;
-	int i = 0;
-
-	size = size_bin(wstr[i]);
-	
-	while (*wstr)
-	{
-		wstr++;
-		len++;
-	}
-	return len;
-}
-
-int		print_wstr(int *wstr)
-{
-	size_t i;
-	int size;
-	size_t len;
-	pf print;
-
-	i = 0;
-	size = size_bin(wstr[i]);
-	len = ft_wstrlen(wstr);
-	printf("in print wstr, len: %zu\n", len);
-	if (size <= 15)
-		print = &write_two_bytes; //p_putchar_unicode[TWO_B] -- segmentation fault;
-	else if (size <= 31)
-		print = &write_three_bytes;
-	else
-		print = &write_four_bytes;
-	while (i < len)
-	{
-		//printf("in loop %zu\n", i);
-		print(wstr[i]);
-		i++;
-	}
-	return (i);
-}
