@@ -374,52 +374,124 @@ int		print_wstr(wchar_t *wstr)
 **----------------------------------------------------------------------------------------------------------
 */
 
-
-size_t	ft_parse_options(const char **fmt, va_list args, int *res)
+int		ft_parse_flags(char *fp, t_options *options)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
-	static t_options *options;
-	options = (t_options*)ft_memalloc(sizeof(t_options));
-	size_t i = 0;
-	char *fp = ++(*fmt);
-	
-	while(fp[i])
+	int i;
+
+	i = 0;
+	if (fp[i] == '-')
 	{
-		if (fp[i] == '-')
 			options->left_align = 1;
-		else if(fp[i] == '+')
-			options->show_sign = 1;
-		else if (fp[i] == ' ')
-			options->space_before = 1;
-		else if (fp[i] == '#')
-			options->show_prefix = 1;
-		else if (fp[i] == '0')
-		{
-			options->fill_by_zero = 1;
 			i++;
-		}
-		if (ft_isdigit(fp[i]))
+	}
+	else if(fp[i] == '+')
+	{
+		options->show_sign = 1;
+		i++;
+	}
+	else if (fp[i] == ' ')
+	{
+		options->space_before = 1;
+		i++;
+	}
+	else if (fp[i] == '#')
+	{
+		options->show_prefix = 1;
+		i++;
+	}
+	else if (fp[i] == '0')
+	{
+		options->fill_by_zero = 1;
+		i++;
+	}
+	return (i);
+}
+
+int		ft_parse_width(char *fp, t_options *options)
+{
+	int i;
+
+	i = 0;
+	if (ft_isdigit(fp[i]))
 		{
 			options->width = ft_atoi(fp + i);
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
-		else if (fp[i] == '.')
+	return (i);
+}
+
+int		ft_parse_percision(char *fp, t_options *options)
+{
+	int i;
+
+	i = 0;
+	if (fp[i] == '.')
 		{
 			i++;
 			options->precision = ft_atoi(fp + i);
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
+	return (i);
+}
+
+int		ft_parse_length(char *fp, t_options *options)
+{
+	int i;
+
+	i = 0;
+	if (fp[i] == 'h')
+	{
+		i++;
+		if (fp[i] == 'h')
+		{
+			options->len_hh = 1;
+			i++;
+		}
+		options->len_h = 1;
+	}
+	if (fp[i] == 'l')
+	{
+		i++;
+		if (fp[i] == 'l')
+		{
+			options->len_ll = 1;
+			i++;
+		}
+		options->len_l = 1;
+	}
+	if (fp[i] == 'j')
+	{
+		options->len_j = 1;
+		i++;
+	}
+	if (fp[i] == 'z')
+	{
+		options->len_z = 1;
 		i++;
 	}
 	return (i);
 }
 
+size_t	ft_parse_options(const char **fmt, va_list args/*, int *res*/)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	t_options *options;
+	options = (t_options*)ft_memalloc(sizeof(t_options));
+	size_t i = 0;
+	char *fp = ++(*fmt);
+	fp += ft_parse_flags(fp, options);
+	fp += ft_parse_width(fp, options);	
+	fp += ft_parse_percision(fp, options);
+	fp += ft_parse_length(fp, options);
+	return (fp - *fmt);
+}
+
 
 int		ft_printf(const char *format, ...)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 
@@ -427,7 +499,15 @@ int		ft_printf(const char *format, ...)
 	while (*format)
 	{
 		if (*format == '%')
-			format += ft_parse_options(&format, args, &res);		
+		{
+			if (*(format + 1) == '%')
+			{
+				ft_putchar(*format++);
+				res++;
+			}
+			else
+			format += ft_parse_options(&format, args/*, &res*/);		
+		}
 		else
 		{
 			ft_putchar(*format);
@@ -445,12 +525,13 @@ int		ft_printf(const char *format, ...)
 
 int main(void)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 
 	int x;
 	
 	ft_printf("no args\n");
-	ft_printf("args %0.\n");
+	ft_printf("args %0. qwe %15\n");
+	ft_printf("arg %%\n");
 	//ft_printf("string: %s", "adsf");
 	//ft_printf("pointer: %p", &x);
 	//ft_printf("hex: %x", 1234);
