@@ -15,28 +15,50 @@
 		 размер
 		 тип 
 */
-
 typedef		int(*pf)();
 
-
-typedef		enum
+typedef		struct s_options
 {
-	CONV_s,
-	CONV_S,
-	CONV_p,
-	CONV_d,
-	CONV_D,
-	CONV_i,
-	CONV_o,
-	CONV_O,
-	CONV_u,
-	CONV_U,
-	CONV_x,
-	CONV_X,
-	CONV_c,
-	CONV_C,
-	CONVERSIONS
-}e_conv;
+	/***----flags----*/
+	int				left_align;			//-
+	int				show_sign;			//+
+	int				space_before;		//' '
+	int				show_prefix;		//#
+	int				fill_by_zero;		//0
+
+	/***----width-----*/
+	size_t			width;
+
+	/***----precision-----*/
+	size_t			precision;	
+			//.
+	/***-----length modificators------*/
+	int 			len_hh;
+	int 			len_h;
+	int 			len_l;
+	int 			len_ll;
+	int 			len_j;
+	int 			len_z;
+}					t_options;
+
+typedef				enum
+{
+					CONV_s,
+					CONV_S,
+					CONV_p,
+					CONV_d,
+					CONV_D,
+					CONV_i,
+					CONV_o,
+					CONV_O,
+					CONV_u,
+					CONV_U,
+					CONV_x,
+					CONV_X,
+					CONV_c,
+					CONV_C,
+					CONVERSIONS
+}					e_conv;
 
 /*
 **-----------------------------------BIT MASKS FOR UNICODE-------------------------------------------------
@@ -67,7 +89,7 @@ pf 	p_putchar_unicode[BIT_MASKS];
 //узнаем количество бит в символе
 int size_bin(size_t symb)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
   int res = 0;
   while (symb > 0)
   {
@@ -79,18 +101,18 @@ int size_bin(size_t symb)
 
 int		write_one_byte(int c)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	write(1, &c, 1);
 	return (1);
 }
 
 int		write_two_bytes(size_t symb)
 {
-	printf("-------------->%s\n", __FUNCTION__);
-	int res;
-	unsigned char o2;
-	unsigned char o1;
-	unsigned char octet;
+	printf("--------------------------------------->%s\n", __FUNCTION__);
+	int 			res;
+	unsigned char 	o2;
+	unsigned char 	o1;
+	unsigned char 	octet;
 
 	res = 0;
 	o2 = (symb << 26) >> 26;
@@ -106,12 +128,12 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
-	printf("-------------->%s\n", __FUNCTION__);
-	int res;
-	unsigned char o3;
-	unsigned char o2;
-	unsigned char o1;
-	unsigned char octet;
+	printf("--------------------------------------->%s\n", __FUNCTION__);
+	int 			res;
+	unsigned char 	o3;
+	unsigned char 	o2;
+	unsigned char 	o1;
+	unsigned char 	octet;
 
 	res = 0;
 	o3 = (symb << 26) >> 26;
@@ -130,13 +152,13 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
-	printf("-------------->%s\n", __FUNCTION__);
-	int res;
-	unsigned char o4;
-	unsigned char o3;
-	unsigned char o2;
-	unsigned char o1;
-	unsigned char octet;
+	printf("--------------------------------------->%s\n", __FUNCTION__);
+	int 			res;
+	unsigned char 	o4;
+	unsigned char 	o3;
+	unsigned char	o2;
+	unsigned char 	o1;
+	unsigned char 	octet;
 
 	res = 0;
 	o4 = (symb << 26) >> 26;
@@ -165,24 +187,67 @@ int		print_wstr(int *wstr);
 **----------------------------------------------------------------------------------------------------------
 */
 
-typedef		enum
-{
-	SF_hh,
-	SF_h,
-	SF_l,
-	SF_ll,
-	SF_j,
-	SF_z,
-	SIZE_FLAGS
-}e_size_flags;
+
 
 /*
 **------------------------------------- NUMBER CONVERSIONS ------------------------------------------------
 */
 
+
+//----------------------itoa_base------------------------
+int		ft_nbr_len(int value, int base)
+{
+	int			len;
+	unsigned	nbr;
+
+	len = 0;
+	if (value == 0)
+		return (1);
+	else if (value < 0)
+	{
+		if (base == 10)
+			len++;
+		nbr = -value;
+	}
+	else
+		nbr = value;
+	while (nbr)
+	{
+		nbr /= base;
+		len++;
+	}
+	return (len);
+}
+
+char	*ft_itoa_base(int value, int base)
+{
+	int				len;
+	unsigned int	res;
+	char			*nbr;
+
+	len = ft_nbr_len(value, base);
+	if (value < 0)
+		res = -value;
+	else
+		res = value;
+	if (!(nbr = (char*)malloc(sizeof(char) * len + 1)))
+		return (NULL);
+	nbr[len] = '\0';
+	while (len-- > 0)
+	{
+		nbr[len] = (res % base) + (res % base > 9 ? 'A' - 10 : '0');
+		res /= base;
+	}
+	if (value < 0 && base == 10)
+		nbr[0] = '-';
+	return (nbr);
+}
+//-----------------------------------------------------------
+
+
 int		print_oct(int n)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -204,7 +269,7 @@ int		print_oct(int n)
 
 int		print_hex_low(size_t n)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -228,7 +293,7 @@ int		print_hex_low(size_t n)
 
 int		print_hex_upper(size_t n)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -252,7 +317,7 @@ int		print_hex_upper(size_t n)
 
 int		print_pointer_addr(size_t ap)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	ft_putstr("0x");
 	print_hex_low(ap);
 	return (1);
@@ -261,7 +326,7 @@ int		print_pointer_addr(size_t ap)
 
 size_t	ft_wstrlen(wchar_t *wstr)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int size;
 	size_t len = 0;
 	int i = 0;
@@ -275,7 +340,7 @@ size_t	ft_wstrlen(wchar_t *wstr)
 
 int		print_wstr(wchar_t *wstr)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	size_t i;
 	int size;
 	size_t len;
@@ -309,46 +374,67 @@ int		print_wstr(wchar_t *wstr)
 **----------------------------------------------------------------------------------------------------------
 */
 
-void	test_print(const char *fmt, va_list *args)
-{
-	printf("-------------->%s\n", __FUNCTION__);
-	while (*fmt)
-	{
-		if (*fmt == '%')
-		{
-			if(++fmt == 's')
-			{
-				ft_putstr(args[1]);
-				fmt++;
-			}
-			else if (++fmt == 'X')
-			{
-				print_hex_upper(args[1]);
-				fmt++;
-			}
-			else if (++fmt == 'p')
-			{
-				print_pointer_addr(args[1]);
-				fmt++;
-			}
-		}
-		ft_putchar(*fmt++);
-	}
-}
 
+size_t	ft_parse_options(const char **fmt, va_list args, int *res)
+{
+	printf("--------------------------------------->%s\n", __FUNCTION__);
+	static t_options *options;
+	options = (t_options*)ft_memalloc(sizeof(t_options));
+	size_t i = 0;
+	char *fp = ++(*fmt);
+	
+	while(fp[i])
+	{
+		if (fp[i] == '-')
+			options->left_align = 1;
+		else if(fp[i] == '+')
+			options->show_sign = 1;
+		else if (fp[i] == ' ')
+			options->space_before = 1;
+		else if (fp[i] == '#')
+			options->show_prefix = 1;
+		else if (fp[i] == '0')
+		{
+			options->fill_by_zero = 1;
+			i++;
+		}
+		if (ft_isdigit(fp[i]))
+		{
+			options->width = ft_atoi(fp + i);
+			while (ft_isdigit(fp[i]))
+				i++;
+		}
+		else if (fp[i] == '.')
+		{
+			i++;
+			options->precision = ft_atoi(fp + i);
+			while (ft_isdigit(fp[i]))
+				i++;
+		}
+		i++;
+	}
+	return (i);
+}
 
 
 int		ft_printf(const char *format, ...)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 
 	va_start(args, format);
-
-	test_print(format, &args);
-
-
+	while (*format)
+	{
+		if (*format == '%')
+			format += ft_parse_options(&format, args, &res);		
+		else
+		{
+			ft_putchar(*format);
+			res++;
+		}
+		format++;
+	}
 	va_end(args);
 	return (res);
 }
@@ -359,13 +445,16 @@ int		ft_printf(const char *format, ...)
 
 int main(void)
 {
-	printf("-------------->%s\n", __FUNCTION__);
+	printf("--------------------------------------->%s\n", __FUNCTION__);
 
 	int x;
+	
 	ft_printf("no args\n");
-	ft_printf("string: %s", "adsf");
-	ft_printf("pointer: %p", &x);
-	ft_printf("hex: %x", 1234);
+	ft_printf("args %0.\n");
+	//ft_printf("string: %s", "adsf");
+	//ft_printf("pointer: %p", &x);
+	//ft_printf("hex: %x", 1234);
+	
 
 /*
 	int x = 125;
