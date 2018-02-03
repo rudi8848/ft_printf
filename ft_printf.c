@@ -282,24 +282,8 @@ int		print_oct(size_t n)
 	return (i);
 }
 
-size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
-{
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
-	ssize_t		nbr;
-	int ret;
-	char *ptr;
 
-	ptr = (char*)*fmt;
-	nbr = va_arg(*args, ssize_t);
-	if (*ptr == 'o')
-	{
-		if (options->show_prefix)
-			ft_putchar('0');
-		ret = print_oct(nbr);
-	}
-	return (ret);
-}
-/*
+
 int		print_hex_low(size_t n)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -355,6 +339,40 @@ int		print_pointer_addr(size_t ap)
 	print_hex_low(ap);
 	return (1);
 }
+
+size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	ssize_t		nbr;
+	int ret;
+	char *ptr;
+
+	ptr = (char*)*fmt;
+	nbr = va_arg(*args, ssize_t);
+	if (*ptr == 'o' || *ptr == 'O')
+	{
+		if (options->show_prefix)
+			ft_putchar('0');
+		ret = print_oct(nbr);
+	}
+	else if (*ptr == 'd' || *ptr == 'i' || *ptr == 'D')
+		ft_putnbr(nbr);
+	else if (*ptr == 'x')
+	{
+		if (options->show_prefix)
+			ft_putstr("0x");
+		ret = print_hex_low(nbr);
+	}
+	else if (*ptr == 'X')
+	{
+		if (options->show_prefix)
+			ft_putstr("0X");
+		ret = print_hex_upper(nbr);
+	}
+	return (ret);
+}
+
+/*
 //void	parse_string(char **str)
 
 size_t	ft_wstrlen(wchar_t *wstr)
@@ -517,7 +535,13 @@ t_pf	ft_choose_type(e_conv conv)
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
+	convert_functions[CONV_d] = &ft_printf_putnbr;
+	convert_functions[CONV_D] = &ft_printf_putnbr;
+	convert_functions[CONV_i] = &ft_printf_putnbr;
 	convert_functions[CONV_o] = &ft_printf_putnbr;
+	convert_functions[CONV_O] = &ft_printf_putnbr;
+	convert_functions[CONV_x] = &ft_printf_putnbr;
+	convert_functions[CONV_X] = &ft_printf_putnbr;
 	return (convert_functions[conv]);
 }
 
@@ -609,9 +633,11 @@ int main(void)
 	ft_printf("no args\n");
 	//ft_printf("args %0. qwe 15\n");
 	ft_printf("arg %%\n");
+	ft_printf("%s\n", "hello");
 	ft_printf("[%c][%c]\n", 'Q', '7');
 	ft_printf("%c %s\n",'0', "qwerty");
 	ft_printf("% %s\n",'0', "qwerty");
+
 	ft_printf("oct %#o\n", 100);
 	printf("oct %#o\n", 100);
 	//ft_printf("string: %s", "adsf");
@@ -635,57 +661,11 @@ int main(void)
 	wchar_t *wstr = L"привет, друг!!!";
 	print_wstr(wstr);
 
-	t_pf p_convert_functions[CONVERSIONS];
+	*/
 
-	p_convert_functions[CONV_x] = &print_hex_low;
-	p_convert_functions[CONV_X] = &print_hex_upper;
-	p_convert_functions[CONV_o] = &print_oct;
-	p_convert_functions[CONV_p] = &print_pointer_addr;
-
-
-
-
-	p_putchar_unicode[ONE_B] = &write_one_byte;
-	p_putchar_unicode[TWO_B] = &write_two_bytes;
-	p_putchar_unicode[THREE_B] = &write_three_bytes;
-	p_putchar_unicode[FOUR_B] = &write_four_bytes;
-
-	p_putchar_unicode[ONE_B](d);
-	printf("\n" );
-
-	p_putchar_unicode[TWO_B](a);
-	printf("\n" );
-
-	p_putchar_unicode[THREE_B](b);
-	printf("\n" );
-
-	p_putchar_unicode[FOUR_B](c);
-	printf("\n" );
-
-
-
-	i = p_convert_functions[CONV_x](x);
-	ft_putchar('\n');
-	printf("%i\n", i);
-
-	i = p_convert_functions[CONV_X](x);
-	ft_putchar('\n');
-	printf("%i\n", i);
-
-	i = p_convert_functions[CONV_o](x);
-	ft_putchar('\n');
-
-	p_convert_functions[CONV_p](&x);
-	ft_putchar('\n');
-	printf("%p\n\n", &x);
-
-	printf("%i\n", i);
-	printf("%zu\n", unicode_masks[TWO_B]);
-
-*/
-
-	/*
-	char *ptr = "Hello world!";
+	
+	char *ptr;
+	ptr = "Hello world!";
 	char *np = 0;
 	int i = 5;
 	unsigned int bs = sizeof(int)*8;
@@ -693,6 +673,7 @@ int main(void)
 	char buf[80];
 
 	mi = (1 << (bs-1)) + 1;
+	
 	ft_printf("my: %s\n", ptr);
 	printf("original: %s\n", ptr);
 	ft_printf("--------------------------------------------------\n");
@@ -705,7 +686,7 @@ int main(void)
 	printf("original: %s is null pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: %d = 5\n", i);
+	//ft_printf("my: %d = 5\n", i);
 	printf("original: %d = 5\n", i);
 	ft_printf("--------------------------------------------------\n");
 
@@ -728,18 +709,18 @@ int main(void)
 	ft_printf("my: signed %d = unsigned %u = hex %x\n", -3, -3, -3);
 	printf("original: signed %d = unsigned %u = hex %x\n", -3, -3, -3);
 	ft_printf("--------------------------------------------------\n");
-
+/*
 	ft_printf("my: %d %s(s)%", 0, "message");
 	printf("original: %d %s(s)%", 0, "message");
 	ft_printf("--------------------------------------------------\n");
-
+*/
 	ft_printf("my: \n");
 	printf("original: \n");
 	ft_printf("--------------------------------------------------\n");
 
 	ft_printf("my: %d %s(s) with %%\n", 0, "message");
 	printf("original: %d %s(s) with %%\n", 0, "message");
-	*/
+	
 	return 0;
 }
 
