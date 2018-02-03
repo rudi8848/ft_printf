@@ -15,7 +15,9 @@
 		 размер
 		 тип 
 */
-typedef		int(*pf)();
+#define ERROR -1
+
+
 
 typedef		struct s_options
 {
@@ -30,8 +32,7 @@ typedef		struct s_options
 	size_t			width;
 
 	/***----precision-----*/
-	size_t			precision;	
-			//.
+	size_t			precision;			//.
 	/***-----length modificators------*/
 	int 			len_hh;
 	int 			len_h;
@@ -40,6 +41,10 @@ typedef		struct s_options
 	int 			len_j;
 	int 			len_z;
 }					t_options;
+
+
+typedef		size_t(*t_pf)(char **, va_list*, t_options*);
+
 
 typedef				enum
 {
@@ -82,9 +87,9 @@ size_t	unicode_masks[BIT_MASKS] = {
 
 int		write_two_bytes(size_t symb);
 
-pf 	p_putchar_unicode[BIT_MASKS];
+t_pf 	p_putchar_unicode[BIT_MASKS];
 
-
+/*
 
 //узнаем количество бит в символе
 int size_bin(size_t symb)
@@ -181,7 +186,7 @@ int		write_four_bytes(size_t symb)
 	return (res);
 }
 int		print_wstr(int *wstr);
-
+*/
 
 /*
 **----------------------------------------------------------------------------------------------------------
@@ -193,7 +198,7 @@ int		print_wstr(int *wstr);
 **------------------------------------- NUMBER CONVERSIONS ------------------------------------------------
 */
 
-
+/*
 //----------------------itoa_base------------------------
 int		ft_nbr_len(int value, int base)
 {
@@ -344,7 +349,7 @@ int		print_wstr(wchar_t *wstr)
 	size_t i;
 	int size;
 	size_t len;
-	pf print;
+	t_pf print;
 
 	i = 0;
 	len = ft_wstrlen(wstr);	
@@ -369,7 +374,7 @@ int		print_wstr(wchar_t *wstr)
 	}
 	return (i);
 }
-
+*/
 /*
 **----------------------------------------------------------------------------------------------------------
 */
@@ -474,24 +479,31 @@ int		ft_parse_length(char *fp, t_options *options)
 	return (i);
 }
 
-size_t	ft_parse_options(const char **fmt, va_list args/*, int *res*/)
+
+
+
+size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	t_options *options;
+	char *fmtp;
+	t_pf ft_transformer;
 	options = (t_options*)ft_memalloc(sizeof(t_options));
-	size_t i = 0;
-	char *fp = ++(*fmt);
-	fp += ft_parse_flags(fp, options);
-	fp += ft_parse_width(fp, options);	
-	fp += ft_parse_percision(fp, options);
-	fp += ft_parse_length(fp, options);
-	return (fp - *fmt);
+	if (!options)
+		return ERROR;
+	fmtp = (char*)++(*format);
+	fmtp += ft_parse_flags(fmtp, options);
+	fmtp += ft_parse_width(fmtp, options);	
+	fmtp += ft_parse_percision(fmtp, options);
+	fmtp += ft_parse_length(fmtp, options);
+	//ft_transformer = ft_choose_specificator(fmtp);
+	//ft_transformer(fmtp, args, options);
+	return (fmtp - *format);
 }
 
 
 int		ft_printf(const char *format, ...)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 
@@ -506,7 +518,7 @@ int		ft_printf(const char *format, ...)
 				res++;
 			}
 			else
-			format += ft_parse_options(&format, args/*, &res*/);		
+			format += ft_parse_options(&format, &args/*, &res*/);		
 		}
 		else
 		{
@@ -553,7 +565,7 @@ int main(void)
 	wchar_t *wstr = L"привет, друг!!!";
 	print_wstr(wstr);
 
-	pf p_convert_functions[CONVERSIONS];
+	t_pf p_convert_functions[CONVERSIONS];
 
 	p_convert_functions[CONV_x] = &print_hex_low;
 	p_convert_functions[CONV_X] = &print_hex_upper;
