@@ -48,21 +48,21 @@ typedef		size_t(*t_pf)(char **, va_list*, t_options*);
 
 typedef				enum
 {
-					CONV_s,
-					CONV_S,
-					CONV_p,
-					CONV_d,
-					CONV_D,
-					CONV_i,
-					CONV_o,
-					CONV_O,
-					CONV_u,
-					CONV_U,
-					CONV_x,
-					CONV_X,
-					CONV_c,
-					CONV_C,
-					CONVERSIONS
+					CONV_s = 's',
+					CONV_S = 'S',
+					CONV_p = 'p',
+					CONV_d = 'd',
+					CONV_D = 'D',
+					CONV_i = 'i',
+					CONV_o = 'o',
+					CONV_O = 'O',
+					CONV_u = 'u',
+					CONV_U = 'U',
+					CONV_x = 'x',
+					CONV_X = 'X',
+					CONV_c = 'c',
+					CONV_C = 'C',
+					CONVERSIONS = 127
 }					e_conv;
 
 /*
@@ -103,14 +103,23 @@ int size_bin(size_t symb)
     }
     return res;
   }
-
-int		write_one_byte(int c)
+*/
+size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
-	write(1, &c, 1);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	ft_putchar(va_arg(*args, int));
 	return (1);
 }
 
+size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
+{
+	char *str = (char*)va_arg(*args, const char*);
+	ft_putstr(str);
+	return (ft_strlen(str));
+}
+
+
+/*
 int		write_two_bytes(size_t symb)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -240,7 +249,7 @@ char	*ft_itoa_base(int value, int base)
 	nbr[len] = '\0';
 	while (len-- > 0)
 	{
-		nbr[len] = (res % base) + (res % base > 9 ? 'A' - 10 : '0');
+		nbr[len] = (res % base) + (res % base > 9 ? 'A' - 10 : '0');		//<<<--- '?' forbidden by Norm
 		res /= base;
 	}
 	if (value < 0 && base == 10)
@@ -248,15 +257,16 @@ char	*ft_itoa_base(int value, int base)
 	return (nbr);
 }
 //-----------------------------------------------------------
+*/
 
 
-int		print_oct(int n)
+int		print_oct(size_t n)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
-	int nb = n;
+	size_t nb = n;
 	while (nb > 0)
 	{
 		nb /= 8;
@@ -272,6 +282,24 @@ int		print_oct(int n)
 	return (i);
 }
 
+size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	ssize_t		nbr;
+	int ret;
+	char *ptr;
+
+	ptr = (char*)*fmt;
+	nbr = va_arg(*args, ssize_t);
+	if (*ptr == 'o')
+	{
+		if (options->show_prefix)
+			ft_putchar('0');
+		ret = print_oct(nbr);
+	}
+	return (ret);
+}
+/*
 int		print_hex_low(size_t n)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -360,7 +388,7 @@ int		print_wstr(wchar_t *wstr)
 	
 	printf(" = %d\n", size);
 	if (size <= 7)
-		print = &write_one_byte;
+		print = &ft_printf_putchar;
 	else if (size <= 15)
 		print = &write_two_bytes; //p_putchar_unicode[TWO_B] -- segmentation fault;
 	else if (size <= 31)
@@ -378,6 +406,9 @@ int		print_wstr(wchar_t *wstr)
 /*
 **----------------------------------------------------------------------------------------------------------
 */
+
+
+
 
 int		ft_parse_flags(char *fp, t_options *options)
 {
@@ -479,8 +510,31 @@ int		ft_parse_length(char *fp, t_options *options)
 	return (i);
 }
 
+t_pf	ft_choose_type(e_conv conv)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	t_pf convert_functions[CONVERSIONS];
 
+	convert_functions[CONV_c] = &ft_printf_putchar;
+	convert_functions[CONV_s] = &ft_printf_putstr;
+	convert_functions[CONV_o] = &ft_printf_putnbr;
+	return (convert_functions[conv]);
+}
 
+static int check_type(char c)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
+		return (1);
+	else if (c == 'p' || c == 'd' || c == 'D' || c == 'i')
+		return (1);
+	else if (c == 'o' || c == 'O' || c == 'u' || c == 'U')
+		return (1);
+	else if (c == 'x' || c == 'X')
+		return (1);
+	else
+		return (0);
+}
 
 size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 {
@@ -491,19 +545,30 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
 		return ERROR;
+	while (*fmtp != ' ')
+	{
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, options);	
 	fmtp += ft_parse_percision(fmtp, options);
 	fmtp += ft_parse_length(fmtp, options);
-	//ft_transformer = ft_choose_specificator(fmtp);
-	//ft_transformer(fmtp, args, options);
+	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
+	if (check_type(*fmtp))
+	{
+		ft_transformer = ft_choose_type(*fmtp);
+		ft_transformer(&fmtp, args, options);
+	}
+	else
+		fmtp++;
 	return (fmtp - *format);
+}
+return 0;
 }
 
 
 int		ft_printf(const char *format, ...)
 {
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 
@@ -542,8 +607,13 @@ int main(void)
 	int x;
 	
 	ft_printf("no args\n");
-	ft_printf("args %0. qwe %15\n");
+	//ft_printf("args %0. qwe 15\n");
 	ft_printf("arg %%\n");
+	ft_printf("[%c][%c]\n", 'Q', '7');
+	ft_printf("%c %s\n",'0', "qwerty");
+	ft_printf("% %s\n",'0', "qwerty");
+	ft_printf("oct %#o\n", 100);
+	printf("oct %#o\n", 100);
 	//ft_printf("string: %s", "adsf");
 	//ft_printf("pointer: %p", &x);
 	//ft_printf("hex: %x", 1234);
