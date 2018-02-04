@@ -635,13 +635,17 @@ int main(void)
 	ft_printf("[%c][%c]\n", 'Q', '7');
 	ft_printf("%c %s\n",'0', "qwerty");
 //	ft_printf("% %s\n",'0', "qwerty");
+  ft_printf("--------------------------------------------------\n");
 
-	ft_printf("oct %#o\n", 100);
-	printf("oct %#o\n", 100);
+	ft_printf("my: oct %#o\n", 100);
+	printf("original: oct %#o\n", 100);
+  ft_printf("--------------------------------------------------\n");
+
 	ft_printf("string: %s\n", "adsf");
 	//ft_printf("pointer: %p", &x);
-	ft_printf("hex: %x\n", 1234);
-	
+  ft_printf("--------------------------------------------------\n");
+	ft_printf("my hex: %X\n", 1234);
+	printf("original hex: %X\n", 1234 );
 
 /*
 	int x = 125;
@@ -671,7 +675,8 @@ int main(void)
 	char buf[80];
 
 	mi = (1 << (bs-1)) + 1;
-	
+  ft_printf("--------------------------------------------------\n");
+
 	ft_printf("my: %s\n", ptr);
 	printf("original: %s\n", ptr);
 	ft_printf("--------------------------------------------------\n");
@@ -705,10 +710,13 @@ int main(void)
 	printf("original: hex %02x = 00\n", 0);
 	ft_printf("--------------------------------------------------\n");
 
+	/*
 	ft_printf("my: signed %d = unsigned %u = hex %x\n", -3, -3, -3);
 	printf("original: signed %d = unsigned %u = hex %x\n", -3, -3, -3);
 	ft_printf("--------------------------------------------------\n");
-/*
+*/
+	/*
+  
 	ft_printf("my: %d %s(s)%", 0, "message");
 	printf("original: %d %s(s)%", 0, "message");
 	ft_printf("--------------------------------------------------\n");
