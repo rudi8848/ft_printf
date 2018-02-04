@@ -60,7 +60,7 @@ typedef				enum
 					CONV_U = 'U',
 					CONV_x = 'x',
 					CONV_X = 'X',
-					CONV_c = 99,
+					CONV_c = 'c',
 					CONV_C = 'C',
 					CONVERSIONS = 127
 }					e_conv;
@@ -336,8 +336,7 @@ int		print_pointer_addr(size_t ap)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
 	ft_putstr("0x");
-	print_hex_low(ap);
-	return (1);
+	return (print_hex_low(ap));
 }
 
 size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
@@ -369,6 +368,8 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 			ft_putstr("0X");
 		ret = print_hex_upper(nbr);
 	}
+	else if (*ptr == 'p')
+		ret = print_pointer_addr((size_t)nbr);
 	return (ret);
 }
 
@@ -542,6 +543,7 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_O] = &ft_printf_putnbr;
 	convert_functions[CONV_x] = &ft_printf_putnbr;
 	convert_functions[CONV_X] = &ft_printf_putnbr;
+	convert_functions[CONV_p] = &ft_printf_putnbr;
 	return (convert_functions[conv]);
 }
 
@@ -668,8 +670,8 @@ int main(void)
 	
 	char *ptr;
 	ptr = "Hello world!";
-	char *np = 0;
 	int i = 5;
+	int *np = &i;
 	unsigned int bs = sizeof(int)*8;
 	int mi;
 	char buf[80];
@@ -685,11 +687,11 @@ int main(void)
 	printf("original: ft_printf test\n");
 	ft_printf("--------------------------------------------------\n");
 	
-	/*
+	
 	ft_printf("my: %s is null pointer\n", np);
 	printf("original: %s is null pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
-	*/
+	
 	ft_printf("my: %d = 5\n", i);
 	printf("original: %d = 5\n", i);
 	ft_printf("--------------------------------------------------\n");
