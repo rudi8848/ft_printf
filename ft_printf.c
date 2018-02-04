@@ -60,7 +60,7 @@ typedef				enum
 					CONV_U = 'U',
 					CONV_x = 'x',
 					CONV_X = 'X',
-					CONV_c = 'c',
+					CONV_c = 99,
 					CONV_C = 'C',
 					CONVERSIONS = 127
 }					e_conv;
@@ -286,7 +286,7 @@ int		print_oct(size_t n)
 
 int		print_hex_low(size_t n)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+//	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -310,7 +310,7 @@ int		print_hex_low(size_t n)
 
 int		print_hex_upper(size_t n)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+//	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -569,23 +569,21 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
 		return ERROR;
-	while (*fmtp != ' ')
-	{
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, options);	
 	fmtp += ft_parse_percision(fmtp, options);
 	fmtp += ft_parse_length(fmtp, options);
 	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
-	if (check_type(*fmtp))
-	{
+//	if (check_type(*fmtp))
+
 		ft_transformer = ft_choose_type(*fmtp);
 		ft_transformer(&fmtp, args, options);
-	}
-	else
-		fmtp++;
+
+//	else
+//		fmtp++;
 	return (fmtp - *format);
-}
+
 return 0;
 }
 
@@ -636,13 +634,13 @@ int main(void)
 	ft_printf("%s\n", "hello");
 	ft_printf("[%c][%c]\n", 'Q', '7');
 	ft_printf("%c %s\n",'0', "qwerty");
-	ft_printf("% %s\n",'0', "qwerty");
+//	ft_printf("% %s\n",'0', "qwerty");
 
 	ft_printf("oct %#o\n", 100);
 	printf("oct %#o\n", 100);
-	//ft_printf("string: %s", "adsf");
+	ft_printf("string: %s\n", "adsf");
 	//ft_printf("pointer: %p", &x);
-	//ft_printf("hex: %x", 1234);
+	ft_printf("hex: %x\n", 1234);
 	
 
 /*
@@ -681,12 +679,13 @@ int main(void)
 	ft_printf("my: ft_printf test\n");
 	printf("original: ft_printf test\n");
 	ft_printf("--------------------------------------------------\n");
-
+	
+	/*
 	ft_printf("my: %s is null pointer\n", np);
 	printf("original: %s is null pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
-
-	//ft_printf("my: %d = 5\n", i);
+	*/
+	ft_printf("my: %d = 5\n", i);
 	printf("original: %d = 5\n", i);
 	ft_printf("--------------------------------------------------\n");
 
