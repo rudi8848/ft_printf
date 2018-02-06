@@ -334,9 +334,42 @@ int		print_hex_upper(size_t n)
 
 int		print_pointer_addr(size_t ap)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	ft_putstr("0x");
 	return (print_hex_low(ap));
+}
+
+
+int		print_dec(ssize_t n)
+{
+//	printf("--------------------------------------->%s\n", __FUNCTION__);
+	size_t nbr;
+	int i;
+	i = 0;
+	if (n < 0)
+	{
+		if (n <= 0);
+		i++;
+		nbr = -n;
+	}
+	else
+		nbr = n;
+	if (n < 0)
+		ft_putchar('-');
+	if (nbr >= 10)
+	{
+		print_dec(nbr / 10);
+		print_dec(nbr % 10);
+	}
+	else
+		ft_putchar(nbr + '0');
+	while (n != 0)
+	{
+		n /= 10;
+		i++;
+	}
+//	printf("len = %d\n", i);
+	return (i);
 }
 
 size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
@@ -355,7 +388,7 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 		ret = print_oct(nbr);
 	}
 	else if (*ptr == 'd' || *ptr == 'i' || *ptr == 'D')
-		ft_putnbr(nbr);
+		print_dec(nbr);
 	else if (*ptr == 'x')
 	{
 		if (options->show_prefix)
@@ -372,6 +405,8 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 		ret = print_pointer_addr((size_t)nbr);
 	return (ret);
 }
+
+
 
 /*
 //void	parse_string(char **str)
@@ -476,7 +511,7 @@ int		ft_parse_width(char *fp, t_options *options)
 	return (i);
 }
 
-int		ft_parse_percision(char *fp, t_options *options)
+int		ft_parse_precision(char *fp, t_options *options)
 {
 	int i;
 
@@ -574,7 +609,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, options);	
-	fmtp += ft_parse_percision(fmtp, options);
+	fmtp += ft_parse_precision(fmtp, options);
 	fmtp += ft_parse_length(fmtp, options);
 	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
 //	if (check_type(*fmtp))
@@ -639,15 +674,15 @@ int main(void)
 //	ft_printf("% %s\n",'0', "qwerty");
   ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: oct %#o\n", 100);
-	printf("original: oct %#o\n", 100);
+	ft_printf("my: oct 	%#o\n", 100);
+	printf("original: oct 	%#o\n", 100);
   ft_printf("--------------------------------------------------\n");
 
 	ft_printf("string: %s\n", "adsf");
 	//ft_printf("pointer: %p", &x);
   ft_printf("--------------------------------------------------\n");
-	ft_printf("my hex: %X\n", 1234);
-	printf("original hex: %X\n", 1234 );
+	ft_printf("my hex: 	%X\n", 1234);
+	printf("original hex: 	%X\n", 1234 );
 
 /*
 	int x = 125;
@@ -673,43 +708,48 @@ int main(void)
 	int i = 5;
 	int *np = &i;
 	unsigned int bs = sizeof(int)*8;
-	int mi;
+	int max_int;
 	char buf[80];
 
-	mi = (1 << (bs-1)) + 1;
+	max_int = ~(1 << (bs-1));
+	int min_int = 1 << (bs - 1);
   ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: %s\n", ptr);
-	printf("original: %s\n", ptr);
+	ft_printf("my: 		%s\n", ptr);
+	printf("original: 	%s\n", ptr);
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: ft_printf test\n");
-	printf("original: ft_printf test\n");
+	ft_printf("my: 		ft_printf test\n");
+	printf("original: 	ft_printf test\n");
 	ft_printf("--------------------------------------------------\n");
 	
 	
-	ft_printf("my: %s is null pointer\n", np);
-	printf("original: %s is null pointer\n", np);
+	ft_printf("my: 		%p  pointer\n", np);
+	printf("original: 	%p pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
 	
-	ft_printf("my: %d = 5\n", i);
-	printf("original: %d = 5\n", i);
+	ft_printf("my: 		%d = 5\n", i);
+	printf("original: 	%d = 5\n", i);
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: %d = - max int\n", mi);
-	printf("original: %d = - max int\n", mi);
+	ft_printf("my: 		%d =  max int\n", max_int);
+	printf("original: 	%d =  max int\n", max_int);
+	ft_printf("--------------------------------------------------\n");
+	ft_printf("my: 		%d =  max int\n", min_int);
+	printf("original: 	%d =  max int\n", min_int);
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: char %c = 'a'\n", 'a');
-	printf("original: char %c = 'a'\n", 'a');
+
+	ft_printf("my: char 	%c = 'a'\n", 'a');
+	printf("original: char 	%c = 'a'\n", 'a');
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: hex %x = ff\n", 0xff);
-	printf("original: hex %x = ff\n", 0xff);
+	ft_printf("my: hex 	%x = ff\n", 0xff);
+	printf("original: hex 	%x = ff\n", 0xff);
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: hex %02x = 00\n", 0);
-	printf("original: hex %02x = 00\n", 0);
+	ft_printf("my: hex 	%02x = 00\n", 0);
+	printf("original: hex 	%02x = 00\n", 0);
 	ft_printf("--------------------------------------------------\n");
 
 	/*
@@ -726,9 +766,9 @@ int main(void)
 	ft_printf("my: \n");
 	printf("original: \n");
 	ft_printf("--------------------------------------------------\n");
-
-	ft_printf("my: %d %s(s) with %%\n", 0, "message");
-	printf("original: %d %s(s) with %%\n", 0, "message");
+	
+	ft_printf("my: %o %s(s) with %%\n", 10, "message");
+	printf("original: %o %s(s) with %%\n", 10, "message");
 	
 	return 0;
 }
