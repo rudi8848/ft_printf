@@ -89,7 +89,7 @@ int		write_two_bytes(size_t symb);
 
 t_pf 	p_putchar_unicode[BIT_MASKS];
 
-/*
+
 
 //узнаем количество бит в символе
 int size_bin(size_t symb)
@@ -103,13 +103,8 @@ int size_bin(size_t symb)
     }
     return res;
   }
-*/
-size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
-{
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
-	ft_putchar(va_arg(*args, int));
-	return (1);
-}
+
+
 
 size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
 {
@@ -119,7 +114,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
 }
 
 
-/*
+
 int		write_two_bytes(size_t symb)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -194,8 +189,28 @@ int		write_four_bytes(size_t symb)
 	res++;
 	return (res);
 }
-int		print_wstr(int *wstr);
-*/
+
+size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	int symb;
+	int len;
+
+	symb = va_arg(*args, int);
+	len = size_bin(symb);
+
+	if (len < 8)
+		ft_putchar(symb);
+	else if (len < 12)
+		write_two_bytes(symb);
+	else if (symb < 17)
+		write_three_bytes(symb);
+	else
+		write_four_bytes(symb);
+	return (1);
+}
+//int		print_wstr(int *wstr);
+
 
 /*
 **----------------------------------------------------------------------------------------------------------
@@ -579,6 +594,7 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_x] = &ft_printf_putnbr;
 	convert_functions[CONV_X] = &ft_printf_putnbr;
 	convert_functions[CONV_p] = &ft_printf_putnbr;
+	convert_functions[CONV_C] = &ft_printf_putchar;
 	return (convert_functions[conv]);
 }
 
@@ -663,7 +679,7 @@ int main(void)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	
-	//setlocale(LC_ALL, "Rus");
+	setlocale(LC_ALL, "");
 	int x;
 	
 	ft_printf("no args\n");
@@ -784,6 +800,10 @@ int main(void)
 	printf("original:  %c\n", 10, arab);
 
 	ft_printf("--------------------------------------------------\n");
+
+	printf("%d\n", size_bin(arab));
+	ft_printf("my: %C\n", arab);
+	printf("original: %lc\n", arab);
 	return 0;
 }
 
