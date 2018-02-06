@@ -662,7 +662,8 @@ int		ft_printf(const char *format, ...)
 int main(void)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
-
+	
+	setlocale(LC_ALL, "Rus");
 	int x;
 	
 	ft_printf("no args\n");
@@ -702,17 +703,17 @@ int main(void)
 
 	*/
 
-	
+	char *rus = "привет, друг!!!";
 	char *ptr;
 	ptr = "Hello world!";
 	int i = 5;
 	int *np = &i;
-	unsigned int bs = sizeof(int)*8;
+	unsigned int size_in_bits = sizeof(int)*8;
 	int max_int;
 	char buf[80];
 
-	max_int = ~(1 << (bs-1));
-	int min_int = 1 << (bs - 1);
+	max_int = ~(1 << (size_in_bits-1));
+	int min_int = 1 << (size_in_bits - 1);
   ft_printf("--------------------------------------------------\n");
 
 	ft_printf("my: 		%s\n", ptr);
@@ -721,6 +722,10 @@ int main(void)
 
 	ft_printf("my: 		ft_printf test\n");
 	printf("original: 	ft_printf test\n");
+	ft_printf("--------------------------------------------------\n");
+
+	ft_printf("my: 		%s\n", rus);
+	printf("original: 	%s\n", rus);
 	ft_printf("--------------------------------------------------\n");
 	
 	
