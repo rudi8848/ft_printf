@@ -769,6 +769,10 @@ int main(void)
 	
 	ft_printf("my: %o %s(s) with %%\n", 10, "message");
 	printf("original: %o %s(s) with %%\n", 10, "message");
+
+	ft_printf("--------------------------------------------------\n");
+	printf("	MB_CUR_MAX: %d\n", MB_CUR_MAX);
+
 	
 	return 0;
 }
