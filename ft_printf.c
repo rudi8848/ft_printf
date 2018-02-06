@@ -663,7 +663,7 @@ int main(void)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	
-	setlocale(LC_ALL, "Rus");
+	//setlocale(LC_ALL, "Rus");
 	int x;
 	
 	ft_printf("no args\n");
@@ -702,8 +702,8 @@ int main(void)
 	print_wstr(wstr);
 
 	*/
-
-	char *rus = "привет, друг!!!";
+	int arab = L'ࢢ';
+	char *rus = "дарова!!!";
 	char *ptr;
 	ptr = "Hello world!";
 	int i = 5;
@@ -778,7 +778,12 @@ int main(void)
 	ft_printf("--------------------------------------------------\n");
 	printf("	MB_CUR_MAX: %d\n", MB_CUR_MAX);
 
+	ft_printf("--------------------------------------------------\n");
 	
+	ft_printf("my: %c\n", 10, arab);
+	printf("original:  %c\n", 10, arab);
+
+	ft_printf("--------------------------------------------------\n");
 	return 0;
 }
 
