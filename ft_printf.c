@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <locale.h>
-#include <wchar.h>
+//#include <wchar.h>
 
 /*
 		ФОРМАТ:
@@ -15,9 +15,33 @@
 		 размер
 		 тип 
 */
+
+
+/*
+	Для обработки численных значений можно использовать UNION. в нем может храниться только одно значение, но типов сколько угодно.
+	то есть тайпдефим юнион со всеми возможными типами, а в принтф_путнамбер по флажкам и типу приваеваем юниону значение ва_арг, а затем 
+	идем в ф-цию конвертации и печатаем
+*/
 #define ERROR -1
 
+typedef union u_number
+{
+	int i;							//<no>
+	unsigned u;						//<no>
+	size_t st;						//z
+	unsigned long int uli;			//l
+	long long int lli;				//ll
+	unsigned long long int ulli;	//ll
+	short sh;			//h
+	unsigned short ush;	//h
+	intmax_t 			//j
+	uintmax_t			//j
+	char				//hh
+	unsigned char		//hh
+	__int64				//L
+	unsigned __int64	//L
 
+} t_number;
 
 typedef		struct s_options
 {
@@ -94,7 +118,7 @@ t_pf 	p_putchar_unicode[BIT_MASKS];
 //узнаем количество бит в символе
 int size_bin(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
   int res = 0;
   while (symb > 0)
   {
@@ -117,7 +141,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
 
 int		write_two_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o2;
 	unsigned char 	o1;
@@ -137,7 +161,7 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o3;
 	unsigned char 	o2;
@@ -161,7 +185,7 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o4;
 	unsigned char 	o3;
@@ -718,7 +742,7 @@ int main(void)
 	print_wstr(wstr);
 
 	*/
-	int arab = L'ࢢ';
+	int arab = L'ڲ';
 	char *rus = "дарова!!!";
 	char *ptr;
 	ptr = "Hello world!";
@@ -745,7 +769,7 @@ int main(void)
 	ft_printf("--------------------------------------------------\n");
 	
 	
-	ft_printf("my: 		%p  pointer\n", np);
+	ft_printf("my: 		%p pointer\n", np);
 	printf("original: 	%p pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
 	
