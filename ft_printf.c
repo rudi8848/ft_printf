@@ -15,9 +15,49 @@
 		 размер
 		 тип 
 */
+
+
+/*
+	Для обработки численных значений можно использовать UNION. в нем может храниться только одно значение, но типов сколько угодно.
+	то есть тайпдефим юнион со всеми возможными типами, а в принтф_путнамбер по флажкам и типу приваеваем юниону значение ва_арг, а затем 
+	идем в ф-цию конвертации и печатаем
+*/
 #define ERROR -1
 
+typedef union u_number
+{
+	int i;							//<no>
+	unsigned u;						//<no>
+	size_t st;						//z
+	long int li; 						//ld = D
+	unsigned long int uli;			//l  O = lo, U = lu
+	long long int lli;				//ll
+	unsigned long long int ulli;	//ll
+	short sh;			//h
+	unsigned short ush;	//h
+	intmax_t imax; 			//j
+	uintmax_t uimax;			//j
+	char c;				//hh
+	unsigned char uc;		//hh
+	//__int64_t i64;				//L
+	//unsigned __int64_t ui64;	//L
 
+} t_number;
+
+
+/*
+			Modifier      |    d, i      |     o, u, x, X       |     n
+         ---------------------------------------------------------------------
+         hh                signed char    unsigned char         signed char *
+         h                 short          unsigned short        short *
+         l (ell)           long           unsigned long         long *
+         ll (ell ell)      long long      unsigned long long    long long *
+         j                 intmax_t       uintmax_t             intmax_t *
+         t                 ptrdiff_t      (see note)            ptrdiff_t *
+         z                 (see note)     size_t                (see note)
+         q (deprecated)    quad_t         u_quad_t              quad_t *
+
+*/
 
 typedef		struct s_options
 {
@@ -94,7 +134,7 @@ t_pf 	p_putchar_unicode[BIT_MASKS];
 //узнаем количество бит в символе
 int size_bin(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
   int res = 0;
   while (symb > 0)
   {
@@ -117,7 +157,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
 
 int		write_two_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o2;
 	unsigned char 	o1;
@@ -137,7 +177,7 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o3;
 	unsigned char 	o2;
@@ -161,7 +201,7 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o4;
 	unsigned char 	o3;
@@ -621,7 +661,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	t_pf ft_transformer;
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
-		return ERROR;
+		exit(ERROR);
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, options);	
@@ -690,11 +730,19 @@ int main(void)
 	ft_printf("%c %s\n",'0', "qwerty");
 //	ft_printf("% %s\n",'0', "qwerty");
   ft_printf("--------------------------------------------------\n");
+<<<<<<< HEAD
 
 	ft_printf("my: oct 	%#o\n", 100);
 	printf("original: oct 	%#o\n", 100);
   ft_printf("--------------------------------------------------\n");
 
+=======
+
+	ft_printf("my: oct 	%#o\n", 100);
+	printf("original: oct 	%#o\n", 100);
+  ft_printf("--------------------------------------------------\n");
+
+>>>>>>> 83245afa209418afbc76c39fa3e1ffa1f14220bb
 	ft_printf("string: %s\n", "adsf");
 	//ft_printf("pointer: %p", &x);
   ft_printf("--------------------------------------------------\n");
@@ -718,7 +766,7 @@ int main(void)
 	print_wstr(wstr);
 
 	*/
-	int arab = L'ࢢ';
+	int arab = 	L'𐑽';	//	L'𝄢';	//	L'𝍨';		//'ڲ';
 	char *rus = "дарова!!!";
 	char *ptr;
 	ptr = "Hello world!";
@@ -745,7 +793,11 @@ int main(void)
 	ft_printf("--------------------------------------------------\n");
 	
 	
+<<<<<<< HEAD
 	ft_printf("my: 		%p  pointer\n", np);
+=======
+	ft_printf("my: 		%p pointer\n", np);
+>>>>>>> 83245afa209418afbc76c39fa3e1ffa1f14220bb
 	printf("original: 	%p pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
 	
@@ -794,16 +846,23 @@ int main(void)
 	ft_printf("--------------------------------------------------\n");
 	printf("	MB_CUR_MAX: %d\n", MB_CUR_MAX);
 
+
 	ft_printf("--------------------------------------------------\n");
+
 	
-	ft_printf("my: %c\n", 10, arab);
-	printf("original:  %c\n", 10, arab);
+	ft_printf("my: %c\n",  arab);
+	printf("original:  %c\n",  arab);
 
 	ft_printf("--------------------------------------------------\n");
 
 	printf("%d\n", size_bin(arab));
 	ft_printf("my: %C\n", arab);
 	printf("original: %lc\n", arab);
+
+
+	ft_printf("--------------------------------------------------\n");
+	
+
 	return 0;
 }
 
