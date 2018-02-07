@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <locale.h>
-//#include <wchar.h>
+#include <wchar.h>
 
 /*
 		ФОРМАТ:
@@ -29,19 +29,35 @@ typedef union u_number
 	int i;							//<no>
 	unsigned u;						//<no>
 	size_t st;						//z
-	unsigned long int uli;			//l
+	long int li; 						//ld = D
+	unsigned long int uli;			//l  O = lo, U = lu
 	long long int lli;				//ll
 	unsigned long long int ulli;	//ll
 	short sh;			//h
 	unsigned short ush;	//h
-	intmax_t 			//j
-	uintmax_t			//j
-	char				//hh
-	unsigned char		//hh
-	__int64				//L
-	unsigned __int64	//L
+	intmax_t imax; 			//j
+	uintmax_t uimax;			//j
+	char c;				//hh
+	unsigned char uc;		//hh
+	//__int64_t i64;				//L
+	//unsigned __int64_t ui64;	//L
 
 } t_number;
+
+
+/*
+			Modifier      |    d, i      |     o, u, x, X       |     n
+         ---------------------------------------------------------------------
+         hh                signed char    unsigned char         signed char *
+         h                 short          unsigned short        short *
+         l (ell)           long           unsigned long         long *
+         ll (ell ell)      long long      unsigned long long    long long *
+         j                 intmax_t       uintmax_t             intmax_t *
+         t                 ptrdiff_t      (see note)            ptrdiff_t *
+         z                 (see note)     size_t                (see note)
+         q (deprecated)    quad_t         u_quad_t              quad_t *
+
+*/
 
 typedef		struct s_options
 {
@@ -645,7 +661,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	t_pf ft_transformer;
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
-		return ERROR;
+		exit(ERROR);
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, options);	
@@ -742,7 +758,7 @@ int main(void)
 	print_wstr(wstr);
 
 	*/
-	int arab = L'ڲ';
+	int arab = 	L'𐑽';	//	L'𝄢';	//	L'𝍨';		//'ڲ';
 	char *rus = "дарова!!!";
 	char *ptr;
 	ptr = "Hello world!";
@@ -828,6 +844,11 @@ int main(void)
 	printf("%d\n", size_bin(arab));
 	ft_printf("my: %C\n", arab);
 	printf("original: %lc\n", arab);
+
+
+	ft_printf("--------------------------------------------------\n");
+	
+
 	return 0;
 }
 
