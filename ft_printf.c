@@ -241,9 +241,9 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 
 	if (len < 8)
 		ft_putchar(symb);
-	else if (len < 12)
+	else if (len < 16)
 		write_two_bytes(symb);
-	else if (symb < 17)
+	else if (symb < 32)
 		write_three_bytes(symb);
 	else
 		write_four_bytes(symb);
@@ -463,19 +463,17 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 
 
 
-/*
-//void	parse_string(char **str)
 
 size_t	ft_wstrlen(wchar_t *wstr)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int size;
 	size_t len = 0;
-	int i = 0;
 
-	size = size_bin(wstr[i]);
+
+	size = size_bin(wstr[len]);
 	
-	while (*wstr++)
+	while (wstr[len] != L'\0')
 		len++;
 	return (len);
 }
@@ -511,7 +509,7 @@ int		print_wstr(wchar_t *wstr)
 	}
 	return (i);
 }
-*/
+
 /*
 **----------------------------------------------------------------------------------------------------------
 */
