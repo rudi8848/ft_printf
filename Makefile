@@ -15,6 +15,7 @@ ft_printf.o: ft_printf.c
 
 clean:
 	rm -f *.o
+	make clean -C libft
 
 fclean: clean
 	rm -f $(NAME)
