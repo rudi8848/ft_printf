@@ -478,35 +478,34 @@ size_t	ft_wstrlen(wchar_t *wstr)
 	return (len);
 }
 
-int		print_wstr(wchar_t *wstr)
+size_t	print_wstr(char **fmt, va_list *args, t_options *options)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
 	size_t i;
 	int size;
-	size_t len;
-	t_pf print;
 
+	wchar_t *wstr;
+	wstr = (wchar_t *)va_arg(*args, wchar_t*);
 	i = 0;
-	len = ft_wstrlen(wstr);	
-	printf("in print wstr, len: %zu\n", len);
-	while (i < len)
+	while (wstr[i] != L'\0')
 	{
 	size = size_bin(wstr[i]);
 	
-	printf(" = %d\n", size);
+	//printf(" = %d\n", size);
+	
 	if (size <= 7)
-		print = &ft_printf_putchar;
+		 ft_putchar(wstr[i]);
 	else if (size <= 15)
-		print = &write_two_bytes; //p_putchar_unicode[TWO_B] -- segmentation fault;
+		write_two_bytes(wstr[i]);
 	else if (size <= 31)
-		print = &write_three_bytes;
+		write_three_bytes(wstr[i]);
 	else
-		print = &write_four_bytes;
+		write_four_bytes(wstr[i]);
 	
 		//printf("in loop %zu\n", i);
-		print(wstr[i]);
+//		print(wstr[i]);
 		i++;
-	}
+
+		}
 	return (i);
 }
 
@@ -633,6 +632,7 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_X] = &ft_printf_putnbr;
 	convert_functions[CONV_p] = &ft_printf_putnbr;
 	convert_functions[CONV_C] = &ft_printf_putchar;
+	convert_functions[CONV_S] = &print_wstr;
 	return (convert_functions[conv]);
 }
 
@@ -718,7 +718,6 @@ int main(void)
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	
 	setlocale(LC_ALL, "");
-	int x;
 	
 	ft_printf("no args\n");
 	//ft_printf("args %0. qwe 15\n");
@@ -739,9 +738,8 @@ int main(void)
 	ft_printf("my hex: 	%X\n", 1234);
 	printf("original hex: 	%X\n", 1234 );
 
-/*
+
 	int x = 125;
-	int i;
 
 	//char	*str = "qwerty";
 	//wchar_t	*wstr = "фыва";
@@ -753,11 +751,10 @@ int main(void)
 	printf("cur max: %d\n", MB_CUR_MAX);
 
 	wchar_t *wstr = L"привет, друг!!!";
-	print_wstr(wstr);
 
-	*/
-	int arab = 	L'𐑽';	//	L'𝄢';	//	L'𝍨';		//'ڲ';
-	char *rus = "дарова!!!";
+
+	int arab = L'ڲ';
+	wchar_t *rus = L"дарова!!!";
 	char *ptr;
 	ptr = "Hello world!";
 	int i = 5;
@@ -778,8 +775,8 @@ int main(void)
 	printf("original: 	ft_printf test\n");
 	ft_printf("--------------------------------------------------\n");
 
-	ft_printf("my: 		%s\n", rus);
-	printf("original: 	%s\n", rus);
+	ft_printf("my: 		%S\n", rus);
+	printf("original: 	%ls\n", rus);
 	ft_printf("--------------------------------------------------\n");
 	
 	
@@ -847,7 +844,7 @@ int main(void)
 
 
 	ft_printf("--------------------------------------------------\n");
-	
+	ft_printf("wstr:	%S\n",rus);	
 
 	return 0;
 }
