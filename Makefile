@@ -2,12 +2,7 @@ NAME = res
 LIBFT = libft.a
 
 all: $(NAME)
-	
-$(NAME): ft_printf.o libft.a
-	gcc -o $(NAME)  ft_printf.o -L. -lft
 
-all: $(NAME)
-	
 $(NAME): ft_printf.o $(LIBFT)
 	gcc -o $(NAME)  ft_printf.o -L. -lft
 
@@ -23,5 +18,6 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	make fclean -C libft
 re:
 	fclean all

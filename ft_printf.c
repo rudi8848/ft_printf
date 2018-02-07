@@ -35,8 +35,8 @@ typedef union u_number
 	unsigned long long int ulli;	//ll
 	short sh;			//h
 	unsigned short ush;	//h
-	intmax_t imax; 			//j
-	uintmax_t uimax;			//j
+	//intmax_t imax; 			//j
+	//uintmax_t uimax;			//j
 	char c;				//hh
 	unsigned char uc;		//hh
 	//__int64_t i64;				//L
@@ -730,19 +730,11 @@ int main(void)
 	ft_printf("%c %s\n",'0', "qwerty");
 //	ft_printf("% %s\n",'0', "qwerty");
   ft_printf("--------------------------------------------------\n");
-<<<<<<< HEAD
 
 	ft_printf("my: oct 	%#o\n", 100);
 	printf("original: oct 	%#o\n", 100);
   ft_printf("--------------------------------------------------\n");
 
-=======
-
-	ft_printf("my: oct 	%#o\n", 100);
-	printf("original: oct 	%#o\n", 100);
-  ft_printf("--------------------------------------------------\n");
-
->>>>>>> 83245afa209418afbc76c39fa3e1ffa1f14220bb
 	ft_printf("string: %s\n", "adsf");
 	//ft_printf("pointer: %p", &x);
   ft_printf("--------------------------------------------------\n");
@@ -793,11 +785,7 @@ int main(void)
 	ft_printf("--------------------------------------------------\n");
 	
 	
-<<<<<<< HEAD
-	ft_printf("my: 		%p  pointer\n", np);
-=======
 	ft_printf("my: 		%p pointer\n", np);
->>>>>>> 83245afa209418afbc76c39fa3e1ffa1f14220bb
 	printf("original: 	%p pointer\n", np);
 	ft_printf("--------------------------------------------------\n");
 	
