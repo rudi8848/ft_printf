@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include <wchar.h>
+#include <stdint.h>
 
 /*
 		ФОРМАТ:
@@ -572,7 +573,7 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 	if (fp[i] == '.')
 		{
 			i++;
-			if (ft_isdigit(ft[i]))
+			if (ft_isdigit(fp[i]))
 			{
 				options->precision = ft_atoi(fp + i);
 				while (ft_isdigit(fp[i]))
@@ -675,7 +676,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
 	fmtp += ft_parse_width(fmtp, args, options);	
-	fmtp += ft_parse_precision(fmtp, options);
+	fmtp += ft_parse_precision(fmtp, args, options);
 	fmtp += ft_parse_length(fmtp, options);
 	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
 //	if (check_type(*fmtp))
@@ -857,7 +858,6 @@ int main(void)
 
 	ft_printf("--------------------------------------------------\n");
 	ft_printf("wstr:	%S\n",rus);	
-
 	return 0;
 }
 
