@@ -29,19 +29,16 @@ typedef union u_number
 	int i;							//<no>
 	unsigned u;						//<no>
 	size_t st;						//z
-	long int li; 						//ld = D
-	unsigned long int uli;			//l  O = lo, U = lu
-	long long int lli;				//ll
-	unsigned long long int ulli;	//ll
+	long int l; 						//ld = D
+	unsigned long int ul;			//l  O = lo, U = lu
+	long long int ll;				//ll
+	unsigned long long int ull;	//ll
 	short sh;			//h
 	unsigned short ush;	//h
-	//intmax_t imax; 			//j
-	//uintmax_t uimax;			//j
-	char c;				//hh
-	unsigned char uc;		//hh
-	//__int64_t i64;				//L
-	//unsigned __int64_t ui64;	//L
-
+	intmax_t ix; 			//j
+	uintmax_t uix;			//j
+	char ch;				//hh
+	unsigned char uch;		//hh
 } t_number;
 
 
@@ -52,10 +49,9 @@ typedef union u_number
          h                 short          unsigned short        short *
          l (ell)           long           unsigned long         long *
          ll (ell ell)      long long      unsigned long long    long long *
-         j                 intmax_t       uintmax_t             intmax_t *
-         t                 ptrdiff_t      (see note)            ptrdiff_t *
-         z                 (see note)     size_t                (see note)
-         q (deprecated)    quad_t         u_quad_t              quad_t *
+         j                 intmax_t       uintmax_t             intmax_t *		<stdint.h>
+         z                 (see note)     size_t                (see note)		<stddef.h> 
+
 
 */
 
@@ -69,10 +65,10 @@ typedef		struct s_options
 	int				fill_by_zero;		//0
 
 	/***----width-----*/
-	size_t			width;
+	int			width;
 
 	/***----precision-----*/
-	size_t			precision;			//.
+	int			precision;			//.
 	/***-----length modificators------*/
 	int 			len_hh;
 	int 			len_h;
@@ -521,37 +517,30 @@ int		ft_parse_flags(char *fp, t_options *options)
 	int i;
 
 	i = 0;
-	if (fp[i] == '-')
+	while (fp[i] == '-' || fp[i] == '+' || fp[i] == ' ' || fp[i] == '#' || fp[i] == '0' )
 	{
-			options->left_align = 1;
-			i++;
-	}
-	else if(fp[i] == '+')
-	{
-		options->show_sign = 1;
-		i++;
-	}
-	else if (fp[i] == ' ')
-	{
-		options->space_before = 1;
-		i++;
-	}
-	else if (fp[i] == '#')
-	{
-		options->show_prefix = 1;
-		i++;
-	}
-	else if (fp[i] == '0')
-	{
-		options->fill_by_zero = 1;
+		if(fp[i] == '+')
+			options->show_sign = 1;
+		else if (fp[i] == ' ')
+			options->space_before = 1;
+		else if (fp[i] == '#')
+			options->show_prefix = 1;
+		else if (fp[i] == '0')
+			options->fill_by_zero = 1;
+		else if (fp[i] == '-')
+		{
+				options->left_align = 1;
+				options->fill_by_zero = 0;
+		}
 		i++;
 	}
 	return (i);
 }
 
-int		ft_parse_width(char *fp, t_options *options)
+int		ft_parse_width(char *fp, va_list *args, t_options *options)
 {
 	int i;
+	int arg;
 
 	i = 0;
 	if (ft_isdigit(fp[i]))
@@ -560,20 +549,43 @@ int		ft_parse_width(char *fp, t_options *options)
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
+	else if (*fp == '*')
+	{
+		arg = va_arg(*args, int);
+		if (arg < 0)
+		{
+			arg = -arg;
+			options->left_align = 1;
+		}
+		options->width = arg;
+		i++;
+	}
 	return (i);
 }
 
-int		ft_parse_precision(char *fp, t_options *options)
+int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 {
 	int i;
+	int arg;
 
 	i = 0;
 	if (fp[i] == '.')
 		{
 			i++;
-			options->precision = ft_atoi(fp + i);
-			while (ft_isdigit(fp[i]))
-				i++;
+			if (ft_isdigit(ft[i]))
+			{
+				options->precision = ft_atoi(fp + i);
+				while (ft_isdigit(fp[i]))
+					i++;
+			}
+			else if (*fp == '*')
+			{
+				arg = va_arg(*args, int);
+				if (arg >= 0)
+					options->precision = arg;
+			}
+			else
+				options->precision = 0;
 		}
 	return (i);
 }
@@ -662,7 +674,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 		exit(ERROR);
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
-	fmtp += ft_parse_width(fmtp, options);	
+	fmtp += ft_parse_width(fmtp, args, options);	
 	fmtp += ft_parse_precision(fmtp, options);
 	fmtp += ft_parse_length(fmtp, options);
 	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
@@ -717,7 +729,7 @@ int main(void)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	
-	setlocale(LC_ALL, "");
+	setlocale(LC_ALL, "Rus");
 	
 	ft_printf("no args\n");
 	//ft_printf("args %0. qwe 15\n");
@@ -746,7 +758,7 @@ int main(void)
 	char d = 'b';
 	wchar_t a = L'Ы';
 	wchar_t b = L'ࢢ';
-	wchar_t c = L'𐄂';
+	//wchar_t c = L'𐄂';
 //printf("%lu\n", sizeof(wchar_t));
 	printf("cur max: %d\n", MB_CUR_MAX);
 

@@ -1,6 +1,8 @@
 #include <stdio.h>
 //#include <wchar.h>
 #include <stdlib.h>
+#include <stdint.h>
+
 /*
 		ФОРМАТ:
 		%[флаги][ширина][.точность][размер]тип
@@ -49,8 +51,8 @@ int		main(void)
 	char *str1 = "дратуйти!";
 	char *str2 = "こんにちは";
 
-	int		number = 2579;
-	int		negnumber = -2579;
+	int		number = ~(1<<31);//2579;
+	int		negnumber = 1<<31;
 	float 	f = 1.23;
 	float 	nf = -1.23;
 /*	int		ret;
@@ -174,9 +176,7 @@ int		main(void)
 	printf("space:   |% f|\n", nf);
 		printf("\n");
 
-	printf("precision:   |%.1f|\n", f);
-	printf("precision:   |%.1f|\n", nf);
-		printf("\n");
+	
 
 	printf("0:   |%0d|\n", number);
 	printf("0:   |%0d|\n", negnumber);
@@ -219,5 +219,55 @@ int		main(void)
 	printf("A, width:   |%A|\n", f);
 	printf("A, width:   |%A|\n", nf);
 		printf("\n");
+
+	printf("+x:   |%+x|\n", number);
+	printf("+x:   |%+x|\n", negnumber);
+	printf("+o:   |%+o|\n", number);
+	printf("+o:   |%+o|\n", negnumber);
+		printf("\n");
+
+printf("no precision:   |%f|\n", f);
+	printf("no precision:   |%f|\n", nf);
+	printf("precision.2:   |%.2f|\n", f);
+	printf("precision.2:   |%.2f|\n", nf);
+	printf("precision.2:   |%.2d|\n", number);
+	printf("precision.2:   |%.2d|\n", negnumber);
+	printf("precision.:   |%.f|\n", f);
+	printf("precision.:   |%.f|\n", nf);
+	printf("precision.:   |%.d|\n", number);
+	printf("precision.:   |%.d|\n", negnumber);
+	printf("precision.-2:   |%.*f|\n",-2,f);
+	printf("precision.-2:   |%.*f|\n",-2, nf);
+	printf("precision.-2:   |%.*d|\n",-2, number);
+	printf("precision.-2:   |%.*d|\n",-2, negnumber);
+		printf("\n");
+	printf("------------------------------LENGTH MODIFIERS------------------------\n");
+
+	printf("hh:		%hhd\n", number);
+	printf("hh:		%hhd\n", negnumber);
+	printf("h:		%hd\n", number);
+	printf("h:		%hd\n", negnumber);
+	printf("l:		%ld\n", number);
+	printf("l:		%ld\n", negnumber);
+	printf("ll:		%lld\n", number);
+	printf("ll:		%lld\n", negnumber);
+	printf("j:		%jd\n", number);
+	printf("j:		%jd\n", negnumber);
+	printf("z:		%zd\n", number);
+	printf("z:		%zd\n", negnumber);
+
+	printf("------------------------------LENGTH SIZES------------------------\n");
+	printf("char:				%zu\n", sizeof(char));
+	printf("unsigned char:		%zu\n", sizeof(unsigned char));
+	printf("short:				%zu\n", sizeof(short));
+	printf("unsigned short:		%zu\n", sizeof(unsigned short));
+	printf("long:				%zu\n", sizeof(long));
+	printf("unsigned long:		%zu\n", sizeof(unsigned long));
+	printf("long long:			%zu\n", sizeof(long long));
+	printf("unsigned long long:	%zu\n", sizeof(unsigned long long));
+	printf("intmax_t:			%zu\n", sizeof(intmax_t));
+	printf("uintmax_t:			%zu\n", sizeof(uintmax_t));
+	printf("size_t:				%zu\n", sizeof(size_t));
+	printf("ssize_t:			%zu\n", sizeof(ssize_t));
 	return 0;
 }
