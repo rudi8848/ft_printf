@@ -1,5 +1,5 @@
-#ifndef __FT_PRINTF_H__
-# define __FT__PRINF_H_
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
 
 #include "libft.h"
 #include <stdarg.h>
