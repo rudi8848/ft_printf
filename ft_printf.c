@@ -141,11 +141,11 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 
 	ptr = *fmt;
 	symb = va_arg(*args, int);
-	len = size_bin(symb);
 	if (*ptr == 'c')
 		ft_putchar(symb);
 	else
 	{
+		len = size_bin(symb);
 		if (len < 8)
 			ft_putchar(symb);
 		else if (len < 16)

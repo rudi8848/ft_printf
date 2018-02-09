@@ -12,7 +12,7 @@ $(LIBFT):
 	make -C libft
 
 $(OBJS): $(SRCS)
-	gcc -c $(SRCS)
+	gcc -c $(SRCS) -g3
 
 clean:
 	rm -f *.o
