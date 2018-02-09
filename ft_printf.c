@@ -137,18 +137,24 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int symb;
 	int len;
+	char *ptr;
 
+	ptr = *fmt;
 	symb = va_arg(*args, int);
 	len = size_bin(symb);
-
-	if (len < 8)
+	if (*ptr == 'c')
 		ft_putchar(symb);
-	else if (len < 16)
-		write_two_bytes(symb);
-	else if (symb < 32)
-		write_three_bytes(symb);
 	else
-		write_four_bytes(symb);
+	{
+		if (len < 8)
+			ft_putchar(symb);
+		else if (len < 16)
+			write_two_bytes(symb);
+		else if (symb < 32)
+			write_three_bytes(symb);
+		else
+			write_four_bytes(symb);
+	}
 	return (1);
 }
 //int		print_wstr(int *wstr);
@@ -394,11 +400,11 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options)
 	
 	//printf(" = %d\n", size);
 	
-	if (size <= 7)
+	if (size < 8)
 		 ft_putchar(wstr[i]);
-	else if (size <= 15)
+	else if (size < 16)
 		write_two_bytes(wstr[i]);
-	else if (size <= 31)
+	else if (size < 32)
 		write_three_bytes(wstr[i]);
 	else
 		write_four_bytes(wstr[i]);
