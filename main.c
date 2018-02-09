@@ -128,7 +128,7 @@ int main(void)
 
 	ft_printf("--------------------------------------------------\n");
 
-	printf("%d\n", size_bin(arab));
+	//printf("%d\n", size_bin(arab));
 	ft_printf("my: %C\n", arab);
 	printf("original: %lc\n", arab);
 

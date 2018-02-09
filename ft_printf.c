@@ -18,7 +18,16 @@
 	то есть тайпдефим юнион со всеми возможными типами, а в принтф_путнамбер по флажкам и типу приваеваем юниону значение ва_арг, а затем 
 	идем в ф-цию конвертации и печатаем
 */
-int		write_two_bytes(size_t symb);
+//int		write_two_bytes(size_t symb);
+
+size_t	unicode_masks[BIT_MASKS] = {
+	0,									//"0xxx xxxx",
+	0xC080,			//49280,			//"110x xxxx    10xx xxxx",
+	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
+	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
+};
+
+
 
 t_pf 	p_putchar_unicode[BIT_MASKS];
 

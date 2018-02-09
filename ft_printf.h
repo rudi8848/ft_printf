@@ -100,13 +100,6 @@ typedef		enum
 	BIT_MASKS
 }e_bit_masks;
 
-size_t	unicode_masks[BIT_MASKS] = {
-	0,									//"0xxx xxxx",
-	0xC080,			//49280,			//"110x xxxx    10xx xxxx",
-	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
-	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
-};
-
 
 
 

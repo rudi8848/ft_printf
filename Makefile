@@ -6,7 +6,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	gcc -o $(NAME)  ft_printf.o -L. -lft
+	gcc -o $(NAME)  $(OBJS) -L. -lft
 
 $(LIBFT):
 	make -C libft
