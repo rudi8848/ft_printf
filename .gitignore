@@ -4,3 +4,6 @@ res.exe
 libft/*.o
 *.a
 a.out
+unicode.c
+test.c
+a.exe

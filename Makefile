@@ -1,16 +1,15 @@
 NAME = res
-LIBFT = libft.a
+LIBFT = libft/libft.a
 SRCS = ft_printf.c main.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	gcc -o $(NAME)  $(OBJS) -L. -lft
+	gcc -o $(NAME)  $(OBJS) -L. $(LIBFT)
 
 $(LIBFT):
 	make -C libft
-	mv libft/libft.a .
 
 $(OBJS): $(SRCS)
 	gcc -c $(SRCS)
