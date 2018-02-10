@@ -48,15 +48,19 @@ int size_bin(size_t symb)
 
 
 
-size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
+size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
 {
+	int len;
+
 	if (!fmt || !options)		//<-------- to do
 		exit(ERROR);
 	char *str = (char*)va_arg(*args, const char*);
 	if (!str)
 		exit(ERROR);
+	len = ft_strlen(str);
 	ft_putstr(str);
-	return (ft_strlen(str));
+	res += len;
+	return (len);
 }
 
 
@@ -136,7 +140,7 @@ int		write_four_bytes(size_t symb)
 	return (res);
 }
 
-size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
+size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int symb;
@@ -161,6 +165,7 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 		else
 			write_four_bytes(symb);
 	}
+	res += 1;
 	return (1);
 }
 //int		print_wstr(int *wstr);
@@ -342,7 +347,7 @@ int		print_dec(int n)
 	return (i);
 }
 
-size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
+size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	ssize_t		nbr;
@@ -374,6 +379,7 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 	}
 	else if (*ptr == 'p')
 		ret = print_pointer_addr((size_t)nbr);
+	res += ret;
 	return (ret);
 }
 
@@ -394,7 +400,7 @@ size_t	ft_wstrlen(wchar_t *wstr)
 	return (len);
 }
 
-size_t	print_wstr(char **fmt, va_list *args, t_options *options)
+size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	size_t i;
 	int size;
@@ -424,6 +430,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options)
 		i++;
 
 		}
+		res += i;
 	return (i);
 }
 
@@ -587,7 +594,7 @@ static int check_type(char c)
 }
 */
 
-size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
+size_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	t_options *options;
@@ -605,7 +612,7 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 //	if (check_type(*fmtp))
 
 		ft_transformer = ft_choose_type(*fmtp);
-		ft_transformer(&fmtp, args, options);
+		ft_transformer(&fmtp, args, options, res);
 
 //	else
 //		fmtp++;
@@ -632,7 +639,7 @@ int		ft_printf(const char *format, ...)
 				res++;
 			}
 			else
-			format += ft_parse_options(&format, &args/*, &res*/);		
+			format += ft_parse_options(&format, &args, &res);		
 		}
 		else
 		{
