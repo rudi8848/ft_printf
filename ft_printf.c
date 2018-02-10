@@ -303,22 +303,23 @@ int		print_pointer_addr(size_t ap)
 }
 
 
-int		print_dec(ssize_t n)
+int		print_dec(int n)
 {
-//	printf("--------------------------------------->%s\n", __FUNCTION__);
-	size_t nbr;
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("number: %zd\n", n);
+	//остальные типы срабатывают некорректно
+	unsigned nbr;
 	int i;
+
 	i = 0;
 	if (n < 0)
 	{
-		if (n <= 0);
+		ft_putchar('-');
 		i++;
 		nbr = -n;
 	}
 	else
-		nbr = n;
-	if (n < 0)
-		ft_putchar('-');
+		nbr = n;	
 	if (nbr >= 10)
 	{
 		print_dec(nbr / 10);

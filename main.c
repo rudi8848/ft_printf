@@ -81,8 +81,8 @@ int main(void)
 	ft_printf("my: 		%d =  max int\n", max_int);
 	printf("original: 	%d =  max int\n", max_int);
 	ft_printf("--------------------------------------------------\n");
-	ft_printf("my: 		%d =  max int\n", min_int);
-	printf("original: 	%d =  max int\n", min_int);
+	ft_printf("my: 		%d =  min int\n", min_int);
+	printf("original: 	%d =  min int\n", min_int);
 	ft_printf("--------------------------------------------------\n");
 
 
@@ -134,7 +134,12 @@ int main(void)
 
 
 	ft_printf("--------------------------------------------------\n");
-	ft_printf("wstr:	%S\n",rus);	
+	ft_printf("wstr:	%S\n",wstr);	
+	printf("wstr:	%ls\n",wstr);
+
+	ft_printf("--------------------------------------------------\n");
+	ft_printf("my: 		%d %i %d %i\n", 777, -777, -56879, 0);
+	printf("original: 	%d %i %d %i\n", 777, -777, -56879, 0);
 	return 0;
 }
 
