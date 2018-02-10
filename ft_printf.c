@@ -383,11 +383,11 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 size_t	ft_wstrlen(wchar_t *wstr)
 {
 	printf("--------------------------------------->%s\n", __FUNCTION__);
-	int size;
+	//int size;
 	size_t len = 0;
 
 
-	size = size_bin(wstr[len]);
+	//size = size_bin(wstr[len]);
 	
 	while (wstr[len] != L'\0')
 		len++;
