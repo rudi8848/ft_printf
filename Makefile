@@ -27,7 +27,7 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 $(NAME): $(SRCS) $(OBJS)
-	gcc -Wall -Wextra -Werror -c $(SRCS)
+	gcc -Wall -Wextra -Werror -c $(SRCS) -g3
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 

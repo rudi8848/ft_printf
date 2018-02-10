@@ -59,7 +59,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 		exit(ERROR);
 	len = ft_strlen(str);
 	ft_putstr(str);
-	res += len;
+	*res += len;
 	return (len);
 }
 
@@ -165,7 +165,7 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 		else
 			write_four_bytes(symb);
 	}
-	res += 1;
+	*res += 1;
 	return (1);
 }
 //int		print_wstr(int *wstr);
@@ -379,7 +379,7 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options, int *res)
 	}
 	else if (*ptr == 'p')
 		ret = print_pointer_addr((size_t)nbr);
-	res += ret;
+	*res += ret;
 	return (ret);
 }
 
@@ -430,7 +430,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 		i++;
 
 		}
-		res += i;
+		*res += i;
 	return (i);
 }
 
@@ -612,8 +612,7 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 //	if (check_type(*fmtp))
 
 		ft_transformer = ft_choose_type(*fmtp);
-		ft_transformer(&fmtp, args, options, res);
-
+		ft_transformer(&fmtp, args, options, res); 
 //	else
 //		fmtp++;
 	return (fmtp - *format);
