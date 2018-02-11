@@ -289,7 +289,7 @@ int		print_oct(size_t n)
 
 
 
-int		print_hex_low(size_t n)
+int		print_hex(size_t n, char a)
 {
 //	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
@@ -303,16 +303,17 @@ int		print_hex_low(size_t n)
 	}
 	if (n >= 16)
 	{
-		print_hex_low(n / 16);
-		print_hex_low(n % 16);
+		print_hex(n / 16, a);
+		print_hex(n % 16, a);
 	}
 	else if (n >= 10 && n <= 15)
-		ft_putchar(n - 10 + 'a');
+		ft_putchar(n - 10 + a);
 	else
 		ft_putchar(n + '0');
 	return (i);
 }
 
+/*
 int		print_hex_upper(size_t n)
 {
 //	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -343,7 +344,7 @@ int		print_pointer_addr(size_t ap)
 	ft_putstr("0x");
 	return (print_hex_low(ap));
 }
-
+*/
 
 void		print_dec(int n)
 {
@@ -366,8 +367,8 @@ void		print_dec(int n)
 	}
 	else
 		ft_putchar(nbr + '0');
-//	printf("len = %d\n", i);
 }
+
 int	fillnchar(int len, int width, char c)
 {
 	while (len < width)
@@ -377,6 +378,46 @@ int	fillnchar(int len, int width, char c)
 	}
 	return (len);
 }
+
+size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res)
+{
+		t_number	nbr;
+	int		len;
+	char *ptr;
+
+	ptr = (char*)*fmt;	
+	nbr.i = va_arg(*args, int);
+	len = ft_nbr_length(nbr, 16, options);
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero)
+		{
+			if (options->show_prefix)
+			{
+				if (*ptr == 'x' || *ptr == 'p')
+					ft_putstr("0x");
+				else if (*ptr == 'X')
+					ft_putstr("0X");
+				len = fillnchar(len, options->width, '0');
+			}
+			else
+			len = fillnchar(len, options->width, '0');
+		}
+		else
+			len = fillnchar(len, options->width, ' ');
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+	}
+	else if (options->width > len && options->left_align)
+	{
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+		len = fillnchar(len, options->width, ' ');
+	}
+	else
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+	*res += len;
+	return (len);
+}
+
 size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *res)
 {
 	t_number	nbr;
