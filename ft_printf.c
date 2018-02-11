@@ -399,12 +399,15 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 				else if (*ptr == 'X')
 					ft_putstr("0X");
 				len = fillnchar(len, options->width, '0');
+				options->show_prefix = 0;
 			}
 			else
 			len = fillnchar(len, options->width, '0');
 		}
 		else
 			len = fillnchar(len, options->width, ' ');
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
 		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
 	}
 	else if (options->width > len && options->left_align)
@@ -643,9 +646,9 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_U] = &ft_printf_putnbr_dec;
 	//convert_functions[CONV_o] = &ft_printf_putnbr_oct;
 	//convert_functions[CONV_O] = &ft_printf_putnbr_oct;
-	//convert_functions[CONV_x] = &ft_printf_putnbr_hex;
-	//convert_functions[CONV_X] = &ft_printf_putnbr_hex;
-	//convert_functions[CONV_p] = &ft_printf_putnbr_hex;
+	convert_functions[CONV_x] = &ft_printf_putnbr_hex;
+	convert_functions[CONV_X] = &ft_printf_putnbr_hex;
+	convert_functions[CONV_p] = &ft_printf_putnbr_hex;
 	//convert_functions[CONV_b] = &ft_printf_putnbr_bin;
 	//convert_functions[CONV_f] = &ft_prinft_putnbr_float;
 	//convert_functions[CONV_F] = &ft_prinft_putnbr_float;
