@@ -47,7 +47,6 @@ int size_bin(size_t symb)
   }
 
 
-
 size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	int len;
@@ -55,13 +54,15 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 	if (!fmt || !options)		//<-------- to do
 		exit(ERROR);
 	char *str = (char*)va_arg(*args, const char*);
+	char *tmp = NULL;
 	if (!str)
 		exit(ERROR);
 	len = ft_strlen(str);
-	if (options->precision < len)
+	if (options->precision && options->precision < len)
 	{
+		tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
+		tmp = ft_strncpy(tmp, str, options->precision);
 		len = options->precision;
-		str[len] = '\0';
 	}
 	if (len < options->width && !options->left_align)
 	{
@@ -69,16 +70,18 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 			len = fillnchar(len, options->width, '0');
 		else
 			len = fillnchar(len, options->width, ' ');
-		ft_putstr(str);
+		tmp ? ft_putstr(tmp) : ft_putstr(str);
 	}
 	else if (len < options->width && options->left_align)
 	{
-		ft_putstr(str);
+		tmp ? ft_putstr(tmp) : ft_putstr(str);
 		len = fillnchar(len, options->width, ' ');
 	}
 	else
-		ft_putstr(str);
+		tmp ? ft_putstr(tmp) : ft_putstr(str);
 	*res += len;
+	if (tmp)
+		free(tmp);
 	return (len);
 }
 
