@@ -84,6 +84,9 @@ typedef				enum
 					CONV_X = 'X',
 					CONV_c = 'c',
 					CONV_C = 'C',
+					CONV_b = 'b',
+					CONV_f = 'f',
+					CONV_F = 'F',
 					CONVERSIONS = 127
 }					e_conv;
 

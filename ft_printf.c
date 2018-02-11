@@ -233,6 +233,37 @@ char	*ft_itoa_base(int value, int base)
 //-----------------------------------------------------------
 */
 
+int	ft_nbr_length(t_number n,int  base, t_options *options)
+{
+	int len;
+	unsigned nbr;
+
+	len = 0;
+	if (n.i < 0)
+	{
+		if (base == 10)
+			len++;
+		nbr = -n.i;
+	}
+	else
+		nbr = n.i;
+	while (nbr)
+	{
+		nbr /= base;
+		len++;
+	}
+	if (options->show_sign || options->space_before)
+		len++;
+	if (options->show_prefix)
+	{
+		if(base == 8)
+			len++;
+		else if (base == 16)
+			len += 2;
+	}
+	return (len);
+}
+
 
 int		print_oct(size_t n)
 {
@@ -314,19 +345,16 @@ int		print_pointer_addr(size_t ap)
 }
 
 
-int		print_dec(int n)
+void		print_dec(int n)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	//printf("number: %zd\n", n);
 	//остальные типы срабатывают некорректно
 	unsigned nbr;
-	int i;
 
-	i = 0;
 	if (n < 0)
 	{
 		ft_putchar('-');
-		i++;
 		nbr = -n;
 	}
 	else
@@ -338,49 +366,52 @@ int		print_dec(int n)
 	}
 	else
 		ft_putchar(nbr + '0');
-	while (n != 0)
-	{
-		n /= 10;
-		i++;
-	}
 //	printf("len = %d\n", i);
-	return (i);
 }
-
-size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options, int *res)
+int	fillnchar(int len, int width, char c)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
-	ssize_t		nbr;
-	int ret;
-	char *ptr;
+	while (len < width)
+	{
+		ft_putchar(c);
+		len++;
+	}
+	return (len);
+}
+size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *res)
+{
+	t_number	nbr;
+	int		len;
 
-	ret = 0;
-	ptr = (char*)*fmt;
-	nbr = va_arg(*args, ssize_t);
-	if (*ptr == 'o' || *ptr == 'O')
+	if (!fmt)
+		exit(ERROR);
+	nbr.i = va_arg(*args, int);
+	len = ft_nbr_length(nbr, 10, options);
+	if (options->width > len && !options->left_align)
 	{
-		if (options->show_prefix)
-			ft_putchar('0');
-		ret = print_oct(nbr);
+		if (options->fill_by_zero)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				len = fillnchar(len, options->width, '0');
+				nbr.i = -nbr.i;
+			}
+			else
+			len = fillnchar(len, options->width, '0');
+		}
+		else
+			len = fillnchar(len, options->width, ' ');
+		print_dec(nbr.i);
 	}
-	else if (*ptr == 'd' || *ptr == 'i' || *ptr == 'D')
-		print_dec(nbr);
-	else if (*ptr == 'x')
+	else if (options->width > len && options->left_align)
 	{
-		if (options->show_prefix)
-			ft_putstr("0x");
-		ret = print_hex_low(nbr);
+		print_dec(nbr.i);
+		len = fillnchar(len, options->width, ' ');
 	}
-	else if (*ptr == 'X')
-	{
-		if (options->show_prefix)
-			ft_putstr("0X");
-		ret = print_hex_upper(nbr);
-	}
-	else if (*ptr == 'p')
-		ret = print_pointer_addr((size_t)nbr);
-	*res += ret;
-	return (ret);
+	else
+		print_dec(nbr.i);
+	*res += len;
+	return (len);
 }
 
 
@@ -564,14 +595,19 @@ t_pf	ft_choose_type(e_conv conv)
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
-	convert_functions[CONV_d] = &ft_printf_putnbr;
-	convert_functions[CONV_D] = &ft_printf_putnbr;
-	convert_functions[CONV_i] = &ft_printf_putnbr;
-	convert_functions[CONV_o] = &ft_printf_putnbr;
-	convert_functions[CONV_O] = &ft_printf_putnbr;
-	convert_functions[CONV_x] = &ft_printf_putnbr;
-	convert_functions[CONV_X] = &ft_printf_putnbr;
-	convert_functions[CONV_p] = &ft_printf_putnbr;
+	convert_functions[CONV_d] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_D] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_i] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_u] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_U] = &ft_printf_putnbr_dec;
+	//convert_functions[CONV_o] = &ft_printf_putnbr_oct;
+	//convert_functions[CONV_O] = &ft_printf_putnbr_oct;
+	//convert_functions[CONV_x] = &ft_printf_putnbr_hex;
+	//convert_functions[CONV_X] = &ft_printf_putnbr_hex;
+	//convert_functions[CONV_p] = &ft_printf_putnbr_hex;
+	//convert_functions[CONV_b] = &ft_printf_putnbr_bin;
+	//convert_functions[CONV_f] = &ft_prinft_putnbr_float;
+	//convert_functions[CONV_F] = &ft_prinft_putnbr_float;
 	convert_functions[CONV_C] = &ft_printf_putchar;
 	convert_functions[CONV_S] = &print_wstr;
 	return (convert_functions[conv]);
