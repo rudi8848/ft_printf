@@ -30,7 +30,7 @@ size_t	unicode_masks[BIT_MASKS] = {
 
 
 t_pf 	p_putchar_unicode[BIT_MASKS];
-
+int	fillnchar(int len, int width, char c);
 
 
 //узнаем количество бит в символе
@@ -58,7 +58,26 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 	if (!str)
 		exit(ERROR);
 	len = ft_strlen(str);
-	ft_putstr(str);
+	if (options->precision < len)
+	{
+		len = options->precision;
+		str[len] = '\0';
+	}
+	if (len < options->width && !options->left_align)
+	{
+		if (options->fill_by_zero)
+			len = fillnchar(len, options->width, '0');
+		else
+			len = fillnchar(len, options->width, ' ');
+		ft_putstr(str);
+	}
+	else if (len < options->width && options->left_align)
+	{
+		ft_putstr(str);
+		len = fillnchar(len, options->width, ' ');
+	}
+	else
+		ft_putstr(str);
 	*res += len;
 	return (len);
 }
@@ -180,6 +199,8 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 /*
 **------------------------------------- NUMBER CONVERSIONS ------------------------------------------------
 */
+
+int	ft_nbr_length(t_number n,int  base, t_options *options)
 {
 	int len;
 	unsigned nbr;
