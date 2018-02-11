@@ -313,38 +313,6 @@ int		print_hex(size_t n, char a)
 	return (i);
 }
 
-/*
-int		print_hex_upper(size_t n)
-{
-//	printf("--------------------------------------->%s\n", __FUNCTION__);
-	int		i;
-
-	i = 0;
-	int nb = n;
-	while (nb > 0)
-	{
-		nb /= 16;
-		i++;
-	}
-	if (n >= 16)
-	{
-		print_hex_upper(n / 16);
-		print_hex_upper(n % 16);
-	}
-	else if (n >= 10 && n <= 15)
-		ft_putchar(n - 10 + 'A');
-	else
-		ft_putchar(n + '0');
-	return (i);
-}
-
-int		print_pointer_addr(size_t ap)
-{
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
-	ft_putstr("0x");
-	return (print_hex_low(ap));
-}
-*/
 
 void		print_dec(int n)
 {
@@ -376,6 +344,38 @@ int	fillnchar(int len, int width, char c)
 		ft_putchar(c);
 		len++;
 	}
+	return (len);
+}
+
+size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
+{
+	t_number	nbr;
+	int		len;
+
+	if (!fmt)
+		exit(ERROR);
+	nbr.i = va_arg(*args, int);
+	len = ft_nbr_length(nbr, 8, options);
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero)
+				len = fillnchar(len, options->width, '0');
+		else
+			len = fillnchar(len, options->width, ' ');
+		if (options->show_prefix)
+			ft_putchar('0');
+		print_oct(nbr.i);
+	}
+	else if (options->width > len && options->left_align)
+	{
+		if (options->show_prefix)
+			ft_putchar('0');
+		print_oct(nbr.i);
+		len = fillnchar(len, options->width, ' ');
+	}
+	else
+		print_dec(nbr.i);
+	*res += len;
 	return (len);
 }
 
@@ -644,8 +644,8 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_i] = &ft_printf_putnbr_dec;
 	convert_functions[CONV_u] = &ft_printf_putnbr_dec;
 	convert_functions[CONV_U] = &ft_printf_putnbr_dec;
-	//convert_functions[CONV_o] = &ft_printf_putnbr_oct;
-	//convert_functions[CONV_O] = &ft_printf_putnbr_oct;
+	convert_functions[CONV_o] = &ft_printf_putnbr_oct;
+	convert_functions[CONV_O] = &ft_printf_putnbr_oct;
 	convert_functions[CONV_x] = &ft_printf_putnbr_hex;
 	convert_functions[CONV_X] = &ft_printf_putnbr_hex;
 	convert_functions[CONV_p] = &ft_printf_putnbr_hex;
