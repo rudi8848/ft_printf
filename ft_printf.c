@@ -229,6 +229,11 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 		len++;
 	else if (options->space_before && base == 10 && n.i >= 0)
 		len++;
+	if (options->precision > len)
+	{
+		fillnchar(len, options->precision, '0');
+		len += (options->precision - len);
+	}
 	if (options->show_prefix)
 	{
 		if(base == 8)
