@@ -209,12 +209,15 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 	unsigned nbr;
 
 	len = 0;
+	nbr = 0;
 	if (n.i < 0)
 	{
 		if (base == 10)
 			len++;
 		nbr = -n.i;
 	}
+	else if (n.i == 0)
+		len++;
 	else
 		nbr = n.i;
 	while (nbr)
@@ -222,9 +225,9 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 		nbr /= base;
 		len++;
 	}
-	if (options->show_sign && base == 10 && n.i > 0)
+	if (options->show_sign && base == 10 && n.i >= 0)
 		len++;
-	if (options->space_before && base == 10 && n.i > 0)
+	else if (options->space_before && base == 10 && n.i >= 0)
 		len++;
 	if (options->show_prefix)
 	{
@@ -263,7 +266,6 @@ int		print_oct(size_t n)
 
 int		print_hex(size_t n, char a)
 {
-//	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int		i;
 
 	i = 0;
@@ -384,11 +386,17 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	}
 	else if (options->width > len && options->left_align)
 	{
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
 		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
 		len = fillnchar(len, options->width, ' ');
 	}
 	else
+	{
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
 		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+	}
 	*res += len;
 	return (len);
 }
@@ -414,7 +422,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 			}
 			else if (options->space_before)
 				ft_putchar(' ');
-			else if (options->show_sign && nbr.i > 0)
+			else if (options->show_sign && nbr.i >= 0)
 				ft_putchar('+');
 			len = fillnchar(len, options->width, '0');
 		}
@@ -428,7 +436,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 	{
 		if (options->space_before && nbr.i > 0)
 			ft_putchar(' ');
-		else if (options->show_sign && nbr.i > 0)
+		else if (options->show_sign && nbr.i >= 0)
 			ft_putchar('+');
 		print_dec(nbr.i);
 		len = fillnchar(len, options->width, ' ');
@@ -437,7 +445,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 	{
 		if(options->space_before && nbr.i > 0)
 			ft_putchar(' ');
-		else if (options->show_sign && nbr.i > 0)
+		else if (options->show_sign && nbr.i >= 0)
 			ft_putchar('+');
 		print_dec(nbr.i);
 	}
@@ -450,7 +458,6 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 
 size_t	ft_wstrlen(wchar_t *wstr)
 {
-	printf("--------------------------------------->%s\n", __FUNCTION__);
 	//int size;
 	size_t len = 0;
 
