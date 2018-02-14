@@ -254,12 +254,12 @@ int		print_oct(size_t n)
 	size_t nb = n;
 	while (nb > 0)
 	{
-		nb /= 8;
+		nb = nb >> 3;
 		i++;
 	}
 	if (n >= 8)
 	{
-		print_oct(n / 8);
+		print_oct(n >> 3);
 		print_oct(n % 8);
 	}
 	else
@@ -277,12 +277,12 @@ int		print_hex(size_t n, char a)
 	int nb = n;
 	while (nb > 0)
 	{
-		nb /= 16;
+		nb = nb >> 4;
 		i++;
 	}
 	if (n >= 16)
 	{
-		print_hex(n / 16, a);
+		print_hex(n >> 4, a);
 		print_hex(n % 16, a);
 	}
 	else if (n >= 10 && n <= 15)
