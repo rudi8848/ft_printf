@@ -46,42 +46,51 @@ int size_bin(size_t symb)
     return res;
   }
 
+int		ft_print_null_string(void)
+{
+	ft_putstr("(null)");
+	return (6);
+}
 
 size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	int len;
 
+	len = 0;
 	if (!fmt || !options)		//<-------- to do
 		exit(ERROR);
 	char *str = (char*)va_arg(*args, const char*);
 	char *tmp = NULL;
-	if (!str)
-		exit(ERROR);
-	len = ft_strlen(str);
-	if (options->precision && options->precision < len)
+	if (str)
 	{
-		tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
-		tmp = ft_strncpy(tmp, str, options->precision);
-		len = options->precision;
-	}
-	if (len < options->width && !options->left_align)
-	{
-		if (options->fill_by_zero)
-			len = fillnchar(len, options->width, '0');
-		else
+		len = ft_strlen(str);
+		if (options->precision && options->precision < len)
+		{
+			tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
+			tmp = ft_strncpy(tmp, str, options->precision);
+			len = options->precision;
+		}
+		if (len < options->width && !options->left_align)
+		{
+			if (options->fill_by_zero)
+				len = fillnchar(len, options->width, '0');
+			else
+				len = fillnchar(len, options->width, ' ');
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
+		}
+		else if (len < options->width && options->left_align)
+		{
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
 			len = fillnchar(len, options->width, ' ');
-		tmp ? ft_putstr(tmp) : ft_putstr(str);
-	}
-	else if (len < options->width && options->left_align)
-	{
-		tmp ? ft_putstr(tmp) : ft_putstr(str);
-		len = fillnchar(len, options->width, ' ');
+		}
+		else
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
+		*res += len;
+		if (tmp)
+			free(tmp);
 	}
 	else
-		tmp ? ft_putstr(tmp) : ft_putstr(str);
-	*res += len;
-	if (tmp)
-		free(tmp);
+			*res += ft_print_null_string();
 	return (len);
 }
 
@@ -169,24 +178,31 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 	int len;
 	char *ptr;
 
-	if (!options)
-		exit(ERROR);			//<<----------to do
+	if (options->width && !options->left_align)
+		*res += fillnchar(1, options->width, ' ') - 1;
 	ptr = *fmt;
-	symb = va_arg(*args, int);
-	if (*ptr == 'c')
-		ft_putchar(symb);
-	else
+	if (args)
 	{
-		len = size_bin(symb);
-		if (len < 8)
+		symb = va_arg(*args, int);
+		if (*ptr == 'c')
 			ft_putchar(symb);
-		else if (len < 16)
-			write_two_bytes(symb);
-		else if (symb < 32)
-			write_three_bytes(symb);
 		else
-			write_four_bytes(symb);
+		{
+			len = size_bin(symb);
+			if (len < 8)
+				ft_putchar(symb);
+			else if (len < 16)
+				write_two_bytes(symb);
+			else if (symb < 32)
+				write_three_bytes(symb);
+			else
+				write_four_bytes(symb);
+		}
 	}
+	else
+		ft_putchar(*ptr);
+	if (options->width && options->left_align)
+		*res += fillnchar(1, options->width, ' ') - 1;
 	*res += 1;
 	return (1);
 }
@@ -334,6 +350,8 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 	if (!fmt)
 		exit(ERROR);
 	nbr.i = va_arg(*args, int);
+	if (nbr.i == 0)
+		(options->show_prefix = 0);
 	len = ft_nbr_length(nbr, 8, options);
 	if (options->width > len && !options->left_align)
 	{
@@ -366,6 +384,8 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 
 	ptr = (char*)*fmt;	
 	nbr.i = va_arg(*args, int);
+	if (nbr.i == 0)
+		(options->show_prefix = 0);
 	len = ft_nbr_length(nbr, 16, options);
 	if (options->width > len && !options->left_align)
 	{
@@ -656,7 +676,7 @@ t_pf	ft_choose_type(e_conv conv)
 	return (convert_functions[conv]);
 }
 
-/*
+
 static int check_type(char c)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -671,7 +691,7 @@ static int check_type(char c)
 	else
 		return (0);
 }
-*/
+
 
 size_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
@@ -679,6 +699,7 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 	t_options *options;
 	char *fmtp;
 	t_pf ft_transformer;
+
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
 		exit(ERROR);
@@ -687,15 +708,20 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 	fmtp += ft_parse_width(fmtp, args, options);	
 	fmtp += ft_parse_precision(fmtp, args, options);
 	fmtp += ft_parse_length(fmtp, options);
-	// ?? проверка на спецификатор?? эта не работает,если после % не идет тип - segmentation fault
-//	if (check_type(*fmtp))
-
+	if (*fmtp != '\0')
+	{
+	if (check_type(*fmtp))
+	{
 		ft_transformer = ft_choose_type(*fmtp);
-		ft_transformer(&fmtp, args, options, res); 
-//	else
-//		fmtp++;
+		ft_transformer(&fmtp, args, options, res);
+	}
+	else
+	{
+		ft_printf_putchar(&fmtp, NULL, options, res);
+		//fmtp++;
+	}
 	return (fmtp - *format);
-
+}
 return 0;
 }
 
@@ -710,15 +736,7 @@ int		ft_printf(const char *format, ...)
 	while (*format)
 	{
 		if (*format == '%')
-		{
-			if (*(format + 1) == '%')
-			{
-				ft_putchar(*format++);
-				res++;
-			}
-			else
-			format += ft_parse_options(&format, &args, &res);		
-		}
+			format += ft_parse_options(&format, &args, &res);
 		else
 		{
 			ft_putchar(*format);
