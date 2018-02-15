@@ -54,6 +54,7 @@ typedef		struct s_options
 	int			width;
 
 	/***----precision-----*/
+	int 		is_set_precision;
 	int			precision;			//.
 	/***-----length modificators------*/
 	int 			len_hh;

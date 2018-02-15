@@ -63,32 +63,32 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 	char *tmp = NULL;
 	if (str)
 	{
-		len = ft_strlen(str);
-		if (options->precision && options->precision < len)
-		{
-			tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
-			tmp = ft_strncpy(tmp, str, options->precision);
-			len = options->precision;
-		}
-		if (len < options->width && !options->left_align)
-		{
-			if (options->fill_by_zero)
-				len = fillnchar(len, options->width, '0');
-			else
+			len = ft_strlen(str);
+			if (options->is_set_precision && options->precision < len)
+			{
+				tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
+				tmp = ft_strncpy(tmp, str, options->precision);
+				len = options->precision;
+			}
+			if (len < options->width && !options->left_align)
+			{
+				if (options->fill_by_zero)
+					len = fillnchar(len, options->width, '0');
+				else
+					len = fillnchar(len, options->width, ' ');
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
+			}
+			else if (len < options->width && options->left_align)
+			{
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
 				len = fillnchar(len, options->width, ' ');
-			tmp ? ft_putstr(tmp) : ft_putstr(str);
+			}
+			else
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
+			*res += len;
+			if (tmp)
+				free(tmp);
 		}
-		else if (len < options->width && options->left_align)
-		{
-			tmp ? ft_putstr(tmp) : ft_putstr(str);
-			len = fillnchar(len, options->width, ' ');
-		}
-		else
-			tmp ? ft_putstr(tmp) : ft_putstr(str);
-		*res += len;
-		if (tmp)
-			free(tmp);
-	}
 	else
 			*res += ft_print_null_string();
 	return (len);
@@ -276,7 +276,7 @@ int		print_oct(size_t n)
 	if (n >= 8)
 	{
 		print_oct(n >> 3);
-		print_oct(n % 8);
+		ft_putchar(n % 8 + '0');
 	}
 	else
 		ft_putchar(n + '0');
@@ -326,7 +326,7 @@ void		print_dec(int n)
 	if (nbr >= 10)
 	{
 		print_dec(nbr / 10);
-		print_dec(nbr % 10);
+		ft_putchar(nbr % 10 + '0');
 	}
 	else
 		ft_putchar(nbr + '0');
@@ -350,7 +350,7 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 	if (!fmt)
 		exit(ERROR);
 	nbr.i = va_arg(*args, int);
-	if (nbr.i == 0)
+	if (nbr.i == 0 /*|| (options->is_set_precision && !options->precision)*/)
 		(options->show_prefix = 0);
 	len = ft_nbr_length(nbr, 8, options);
 	if (options->width > len && !options->left_align)
@@ -361,17 +361,24 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 			len = fillnchar(len, options->width, ' ');
 		if (options->show_prefix)
 			ft_putchar('0');
-		print_oct(nbr.i);
+		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
+			print_oct(nbr.i);
 	}
 	else if (options->width > len && options->left_align)
 	{
 		if (options->show_prefix)
 			ft_putchar('0');
-		print_oct(nbr.i);
+		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
+			print_oct(nbr.i);
 		len = fillnchar(len, options->width, ' ');
 	}
 	else
+	{
+		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
+		if (options->show_prefix)
+			ft_putchar('0');	
 		print_oct(nbr.i);
+	}
 	*res += len;
 	return (len);
 }
@@ -557,6 +564,8 @@ int		ft_parse_flags(char *fp, t_options *options)
 		}
 		i++;
 	}
+	if (options->show_sign && options->space_before)
+		options->space_before = 0;
 	return (i);
 }
 
@@ -595,6 +604,7 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 	if (fp[i] == '.')
 		{
 			i++;
+			options->is_set_precision = 1;
 			if (ft_isdigit(fp[i]))
 			{
 				options->precision = ft_atoi(fp + i);
@@ -607,9 +617,9 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 				if (arg >= 0)
 					options->precision = arg;
 			}
-			else
-				options->precision = 0;
 		}
+	else
+				options->is_set_precision = 0;
 	return (i);
 }
 
@@ -710,18 +720,17 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 	fmtp += ft_parse_length(fmtp, options);
 	if (*fmtp != '\0')
 	{
-	if (check_type(*fmtp))
-	{
-		ft_transformer = ft_choose_type(*fmtp);
-		ft_transformer(&fmtp, args, options, res);
+		if (check_type(*fmtp))
+		{
+			ft_transformer = ft_choose_type(*fmtp);
+			ft_transformer(&fmtp, args, options, res);
+		}
+		else
+				ft_printf_putchar(&fmtp, NULL, options, res);
+		if (options)
+			free(options);
+		return (fmtp - *format);
 	}
-	else
-	{
-		ft_printf_putchar(&fmtp, NULL, options, res);
-		//fmtp++;
-	}
-	return (fmtp - *format);
-}
 return 0;
 }
 
