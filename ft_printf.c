@@ -245,16 +245,14 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 		len++;
 	else if (options->space_before && base == 10 && n.i >= 0)
 		len++;
-	if (options->precision > len)
-	{
-		fillnchar(len, options->precision, '0');
-		len += (options->precision - len);
-	}
+	//if (options->precision > len)
+	//{
+	//	fillnchar(len, options->precision, '0');
+	//	len += (options->precision - len);
+	//}
 	if (options->show_prefix)
 	{
-		if(base == 8)
-			len++;
-		else if (base == 16)
+		 if (base == 16)
 			len += 2;
 	}
 	return (len);
@@ -334,53 +332,58 @@ void		print_dec(int n)
 
 int	fillnchar(int len, int width, char c)
 {
+	int i = 0;
 	while (len < width)
 	{
 		ft_putchar(c);
 		len++;
+		i++;
 	}
-	return (len);
+	return (i);
 }
 
 size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
 {
 	t_number	nbr;
 	int		len;
-
+	int 		ret = 0;
 	if (!fmt)
 		exit(ERROR);
 	nbr.i = va_arg(*args, int);
-	if (nbr.i == 0 /*|| (options->is_set_precision && !options->precision)*/)
-		(options->show_prefix = 0);
 	len = ft_nbr_length(nbr, 8, options);
+	if (nbr.i != 0  && options->show_prefix)
+	{
+		if (options->precision < len)
+			options->precision = len + 1;
+	}
 	if (options->width > len && !options->left_align)
 	{
 		if (options->fill_by_zero)
-				len = fillnchar(len, options->width, '0');
+				ret += fillnchar(len, options->width, '0');
 		else
-			len = fillnchar(len, options->width, ' ');
-		if (options->show_prefix)
-			ft_putchar('0');
-		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
-			print_oct(nbr.i);
+		{
+			ret += fillnchar(options->precision, options->width, ' ');
+			if (options->precision > len)
+				ret += fillnchar(len, options->precision, '0');
+		}
+			ret += print_oct(nbr.i);
 	}
+	
 	else if (options->width > len && options->left_align)
 	{
-		if (options->show_prefix)
-			ft_putchar('0');
-		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
-			print_oct(nbr.i);
-		len = fillnchar(len, options->width, ' ');
+			if (options->precision > len)
+				ret += fillnchar(len, options->precision, '0');
+		ret += print_oct(nbr.i);
+		ret += fillnchar(ret, options->width, ' ');
 	}
 	else
 	{
-		//if (!(options->is_set_precision && !options->precision) || !options->is_set_precision || options->precision)
-		if (options->show_prefix)
-			ft_putchar('0');	
-		print_oct(nbr.i);
+			if (options->precision > len)
+				ret += fillnchar(len, options->precision, '0');
+		ret += print_oct(nbr.i);
 	}
-	*res += len;
-	return (len);
+	*res += ret;
+	return (ret);
 }
 
 size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res)
