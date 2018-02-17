@@ -368,9 +368,12 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 				ret += fillnchar(len, options->width, '0');
 		else
 		{
-			ret += fillnchar(options->precision, options->width, ' ');
+			if (options->precision)
+				ret += fillnchar(options->precision, options->width, ' ');
 			if (options->precision > len)
 				ret += fillnchar(len, options->precision, '0');
+			else
+				ret += fillnchar(len, options->width, ' ');
 		}
 			ret += print_oct(nbr.i);
 	}
