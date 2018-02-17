@@ -262,10 +262,6 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 
 void		print_oct(size_t n)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
-	int		i;
-
-	i = 0;
 	if (n >= 8)
 	{
 		print_oct(n >> 3);
@@ -465,9 +461,10 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 			}
 		}
 		else
+		{
 			if (options->precision < len) 
 				ret += fillnchar(len, options->width, ' ');
-			if (options->precision > len)
+		else if (options->precision > len)
 				ret += fillnchar(options->precision + options->show_sign, options->width, ' ');
 			if (options->show_sign && !options->fill_by_zero && nbr.i >= 0)
 			{
@@ -484,6 +481,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 				len--;
 			}
 			ret += fillnchar(len, options->precision, '0');
+		}
 		}
 		print_dec(nbr.i);
 		ret += len;
