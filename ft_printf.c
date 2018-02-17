@@ -247,15 +247,10 @@ int	ft_nbr_length(t_number n,int  base, t_options *options)
 		nbr /= base;
 		len++;
 	}
-	if (options->show_sign && base == 10 && n.i >= 0)
-		len++;
-	else if (options->space_before && base == 10 && n.i >= 0)
-		len++;
-	//if (options->precision > len)
-	//{
-	//	fillnchar(len, options->precision, '0');
-	//	len += (options->precision - len);
-	//}
+	//if (options->show_sign && base == 10 && n.i >= 0)
+	//	len++;
+	//else if (options->space_before && base == 10 && n.i >= 0)
+	//	len++;
 	if (options->show_prefix)
 	{
 		 if (base == 16)
@@ -282,17 +277,8 @@ void		print_oct(size_t n)
 
 
 
-int		print_hex(size_t n, char a)
+void		print_hex(size_t n, char a)
 {
-	int		i;
-
-	i = 0;
-	int nb = n;
-	while (nb > 0)
-	{
-		nb = nb >> 4;
-		i++;
-	}
 	if (n >= 16)
 	{
 		print_hex(n >> 4, a);
@@ -302,7 +288,6 @@ int		print_hex(size_t n, char a)
 		ft_putchar(n - 10 + a);
 	else
 		ft_putchar(n + '0');
-	return (i);
 }
 
 
@@ -357,7 +342,7 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 	}
 	if (options->width > len && !options->left_align)
 	{
-		if (options->fill_by_zero)
+		if (options->fill_by_zero && !options->precision)
 				ret += fillnchar(len, options->width, '0');
 		else
 		{
@@ -405,7 +390,7 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	len = ft_nbr_length(nbr, 16, options);
 	if (options->width > len && !options->left_align)
 	{
-		if (options->fill_by_zero)
+		if (options->fill_by_zero && !options->precision)
 		{
 			if (options->show_prefix)
 			{
@@ -452,46 +437,114 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 		exit(ERROR);
 	nbr.i = va_arg(*args, int);
 	len = ft_nbr_length(nbr, 10, options);
+
+
 	if (options->width > len && !options->left_align)
 	{
-		if (options->fill_by_zero)
+		if (options->fill_by_zero && !options->precision)
 		{
 			if (nbr.i < 0)
 			{
 				ft_putchar('-');
-				ret++;
 				ret += fillnchar(len, options->width, '0');
 				nbr.i = -nbr.i;
 			}
-			else if (options->space_before)
-				ft_putchar(' ');
-			else if (options->show_sign && nbr.i >= 0)
-				ft_putchar('+');
-			ret += fillnchar(len, options->width, '0');
+			else
+			{
+				if (options->space_before)
+				{
+					ft_putchar(' ');
+					ret++;
+				}
+				else if (options->show_sign && nbr.i >= 0)
+				{
+					ft_putchar('+');
+					ret++;
+				}
+				ret += fillnchar(len + ret, options->width, '0');
+			}
 		}
 		else
-			ret += fillnchar(len, options->width, ' ');
-		if (options->show_sign && !options->fill_by_zero)
-			ft_putchar('+');
+			if (options->precision < len) 
+				ret += fillnchar(len, options->width, ' ');
+			if (options->precision > len)
+				ret += fillnchar(options->precision + options->show_sign, options->width, ' ');
+			if (options->show_sign && !options->fill_by_zero && nbr.i >= 0)
+			{
+				ft_putchar('+');
+				ret++;
+				}	
+		if (options->precision >= len)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				nbr.i = -nbr.i;
+				ret++;
+				len--;
+			}
+			ret += fillnchar(len, options->precision, '0');
+		}
 		print_dec(nbr.i);
 		ret += len;
 	}
+
+
+
+
+
 	else if (options->width > len && options->left_align)
 	{
 		if (options->space_before && nbr.i > 0)
-			ft_putchar(' ');
+			{
+				ft_putchar(' ');
+				ret++;
+			}
 		else if (options->show_sign && nbr.i >= 0)
-			ft_putchar('+');
+			{
+				ft_putchar('+');
+				ret++;
+			}
+		if (options->precision > len)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				nbr.i = -nbr.i;
+			}
+			ret += fillnchar(len, options->precision, '0');
+		}
 		print_dec(nbr.i);
 		ret += len;
 		ret += fillnchar(ret, options->width, ' ');
 	}
+
+
+
+
 	else
 	{
 		if(options->space_before && nbr.i > 0)
-			ft_putchar(' ');
+			{
+				ft_putchar(' ');
+				ret++;
+			}
 		else if (options->show_sign && nbr.i >= 0)
-			ft_putchar('+');
+			{
+				ft_putchar('+');
+				ret++;
+			}
+		if (options->precision > len)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				nbr.i = -nbr.i;
+				len--;
+				ret++;
+			}
+			ret += fillnchar(len, options->precision, '0');
+		}
 		print_dec(nbr.i);
 		ret += len;
 	}
