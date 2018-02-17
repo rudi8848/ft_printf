@@ -646,7 +646,7 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
-	else if (*fp == '*')
+	else if (fp[i] == '*')
 	{
 		arg = va_arg(*args, int);
 		if (arg < 0)
@@ -676,15 +676,14 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 				while (ft_isdigit(fp[i]))
 					i++;
 			}
-			else if (*fp == '*')
+			else if (fp[i] == '*')
 			{
 				arg = va_arg(*args, int);
 				if (arg >= 0)
 					options->precision = arg;
+				i++;
 			}
 		}
-	else
-				options->is_set_precision = 0;
 	return (i);
 }
 
@@ -780,7 +779,7 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 		exit(ERROR);
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
-	fmtp += ft_parse_width(fmtp, args, options);	
+	fmtp += ft_parse_width(fmtp, args, options);
 	fmtp += ft_parse_precision(fmtp, args, options);
 	fmtp += ft_parse_length(fmtp, options);
 	if (*fmtp != '\0')
