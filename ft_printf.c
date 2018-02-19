@@ -100,7 +100,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 	return (len);
 }
 
-
+/*
 
 int		write_two_bytes(size_t symb)
 {
@@ -176,12 +176,36 @@ int		write_four_bytes(size_t symb)
 	res++;
 	return (res);
 }
+*/
+
+void    ft_putwchar(wchar_t chr)
+{
+    if (chr <= 0x7F)
+        ft_putchar(chr);
+    else if (chr <= 0x7FF)
+    {
+        ft_putchar((chr >> 6) + 0xC0);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+    else if (chr <= 0xFFFF)
+    {
+        ft_putchar((chr >> 12) + 0xE0);
+        ft_putchar(((chr >> 6) & 0x3F) + 0x80);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+    else if (chr <= 0x10FFFF)
+    {
+        ft_putchar((chr >> 18) + 0xF0);
+        ft_putchar(((chr >> 12) & 0x3F) + 0x80);
+        ft_putchar(((chr >> 6) & 0x3F) + 0x80);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+}
 
 size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int symb;
-	int len;
 	char *ptr;
 
 	if (options->width && !options->left_align)
@@ -193,17 +217,7 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 		if (*ptr == 'c')
 			ft_putchar(symb);
 		else
-		{
-			len = size_bin(symb);
-			if (len < 8)
-				ft_putchar(symb);
-			else if (len < 16)
-				write_two_bytes(symb);
-			else if (symb < 32)
-				write_three_bytes(symb);
-			else
-				write_four_bytes(symb);
-		}
+			ft_putwchar(symb);
 	}
 	else
 		ft_putchar(*ptr);
@@ -383,6 +397,8 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	nbr.i = va_arg(*args, int);
 	if (nbr.i == 0)
 		(options->show_prefix = 0);
+	if (*ptr == 'p')
+		(options->show_prefix = 1);
 	len = ft_nbr_length(nbr, 16, options);
 	if (options->width > len && !options->left_align)
 	{
@@ -582,14 +598,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 	
 	//printf(" = %d\n", size);
 	
-	if (size < 8)
-		 ft_putchar(wstr[i]);
-	else if (size < 16)
-		write_two_bytes(wstr[i]);
-	else if (size < 32)
-		write_three_bytes(wstr[i]);
-	else
-		write_four_bytes(wstr[i]);
+	ft_putwchar(wstr[i]);
 	
 		//printf("in loop %zu\n", i);
 //		print(wstr[i]);
@@ -640,13 +649,15 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 	int arg;
 
 	i = 0;
+	while (ft_isdigit(fp[i]) || fp[i] == '*')
+	{
 	if (ft_isdigit(fp[i]))
 		{
 			options->width = ft_atoi(fp + i);
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
-	else if (fp[i] == '*')
+	if (fp[i] == '*')
 	{
 		arg = va_arg(*args, int);
 		if (arg < 0)
@@ -656,6 +667,7 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 		}
 		options->width = arg;
 		i++;
+	}
 	}
 	return (i);
 }
@@ -676,11 +688,13 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 				while (ft_isdigit(fp[i]))
 					i++;
 			}
-			else if (fp[i] == '*')
+			if (fp[i] == '*')
 			{
 				arg = va_arg(*args, int);
 				if (arg >= 0)
 					options->precision = arg;
+				else
+					options->is_set_precision = 0;
 				i++;
 			}
 		}
