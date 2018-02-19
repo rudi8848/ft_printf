@@ -19,14 +19,14 @@
 	идем в ф-цию конвертации и печатаем
 */
 //int		write_two_bytes(size_t symb);
-
-size_t	unicode_masks[BIT_MASKS] = {
+/*
+//size_t	unicode_masks[BIT_MASKS] = {
 	0,									//"0xxx xxxx",
 	0xC080,			//49280,			//"110x xxxx    10xx xxxx",
 	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
 	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
 };
-
+*/
 
 
 t_pf 	p_putchar_unicode[BIT_MASKS];
@@ -617,7 +617,7 @@ size_t	ft_wstrlen(wchar_t *wstr)
 size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	size_t i;
-	int size;
+	//int size;
 
 	if (!fmt || !options)
 		exit(ERROR);
@@ -626,7 +626,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 	i = 0;
 	while (wstr[i] != L'\0')
 	{
-	size = size_bin(wstr[i]);
+	//size = size_bin(wstr[i]);
 	
 	//printf(" = %d\n", size);
 	
