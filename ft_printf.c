@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 #include "libft.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <locale.h>
 #include <wchar.h>
 #include <stdint.h>
+=======
+#include "includes/ft_printf.h"
+>>>>>>> libftprintf
 
 /*
 		ФОРМАТ:
@@ -23,6 +27,7 @@
 	то есть тайпдефим юнион со всеми возможными типами, а в принтф_путнамбер по флажкам и типу приваеваем юниону значение ва_арг, а затем 
 	идем в ф-цию конвертации и печатаем
 */
+<<<<<<< HEAD
 #define ERROR -1
 
 typedef union u_number
@@ -114,6 +119,9 @@ typedef		enum
 	FOUR_B,
 	BIT_MASKS
 }e_bit_masks;
+=======
+//int		write_two_bytes(size_t symb);
+>>>>>>> libftprintf
 
 size_t	unicode_masks[BIT_MASKS] = {
 	0,									//"0xxx xxxx",
@@ -122,10 +130,17 @@ size_t	unicode_masks[BIT_MASKS] = {
 	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
 };
 
+<<<<<<< HEAD
 int		write_two_bytes(size_t symb);
 
 t_pf 	p_putchar_unicode[BIT_MASKS];
 
+=======
+
+
+t_pf 	p_putchar_unicode[BIT_MASKS];
+int	fillnchar(int len, int width, char c);
+>>>>>>> libftprintf
 
 
 //узнаем количество бит в символе
@@ -141,6 +156,7 @@ int size_bin(size_t symb)
     return res;
   }
 
+<<<<<<< HEAD
 
 
 size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
@@ -151,6 +167,63 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options)
 }
 
 
+=======
+int		ft_print_null_string(void)
+{
+	ft_putstr("(null)");
+	return (6);
+}
+
+size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
+{
+	int len;
+	int ret = 0;
+
+	len = 0;
+	if (!fmt || !options)		//<-------- to do
+		exit(ERROR);
+	char *str = (char*)va_arg(*args, const char*);
+	char *tmp = NULL;
+	if (str)
+	{
+			len = ft_strlen(str);
+			if (options->is_set_precision && options->precision < len)
+			{
+				tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
+				tmp = ft_strncpy(tmp, str, options->precision);
+				len = options->precision;
+			}
+			if (len < options->width && !options->left_align)
+			{
+				if (options->fill_by_zero)
+					ret += fillnchar(len, options->width, '0');
+				else
+					ret += fillnchar(len, options->width, ' ');
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
+				ret += len;
+			}
+			else if (len < options->width && options->left_align)
+			{
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
+				ret += len;
+				ret += fillnchar(ret, options->width, ' ');
+			}
+			else
+			{
+				tmp ? ft_putstr(tmp) : ft_putstr(str);
+				ret += len;
+			}
+			*res += ret;
+			if (tmp)
+				free(tmp);
+		}
+	else
+			*res += ft_print_null_string();
+	return (len);
+}
+
+/*
+>>>>>>> libftprintf
 
 int		write_two_bytes(size_t symb)
 {
@@ -226,6 +299,7 @@ int		write_four_bytes(size_t symb)
 	res++;
 	return (res);
 }
+<<<<<<< HEAD
 
 size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 {
@@ -244,6 +318,56 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 		write_three_bytes(symb);
 	else
 		write_four_bytes(symb);
+=======
+*/
+
+void    ft_putwchar(wchar_t chr)
+{
+    if (chr <= 0x7F)
+        ft_putchar(chr);
+    else if (chr <= 0x7FF)
+    {
+        ft_putchar((chr >> 6) + 0xC0);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+    else if (chr <= 0xFFFF)
+    {
+        ft_putchar((chr >> 12) + 0xE0);
+        ft_putchar(((chr >> 6) & 0x3F) + 0x80);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+    else if (chr <= 0x10FFFF)
+    {
+        ft_putchar((chr >> 18) + 0xF0);
+        ft_putchar(((chr >> 12) & 0x3F) + 0x80);
+        ft_putchar(((chr >> 6) & 0x3F) + 0x80);
+        ft_putchar((chr & 0x3F) + 0x80);
+    }
+}
+
+size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	int symb;
+	char *ptr;
+
+	if (options->width && !options->left_align)
+		*res += fillnchar(1, options->width, ' ');
+	ptr = *fmt;
+	if (args)
+	{
+		symb = va_arg(*args, int);
+		if (*ptr == 'c')
+			ft_putchar(symb);
+		else
+			ft_putwchar(symb);
+	}
+	else
+		ft_putchar(*ptr);
+	if (options->width && options->left_align)
+		*res += fillnchar(1, options->width, ' ');
+	*res += 1;
+>>>>>>> libftprintf
 	return (1);
 }
 //int		print_wstr(int *wstr);
@@ -259,6 +383,7 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options)
 **------------------------------------- NUMBER CONVERSIONS ------------------------------------------------
 */
 
+<<<<<<< HEAD
 /*
 //----------------------itoa_base------------------------
 int		ft_nbr_len(int value, int base)
@@ -277,11 +402,31 @@ int		ft_nbr_len(int value, int base)
 	}
 	else
 		nbr = value;
+=======
+int	ft_nbr_length(t_number n,int  base, t_options *options)
+{
+	int len;
+	unsigned nbr;
+
+	len = 0;
+	nbr = 0;
+	if (n.i < 0)
+	{
+		if (base == 10)
+			len++;
+		nbr = -n.i;
+	}
+	else if (n.i == 0)
+		len++;
+	else
+		nbr = n.i;
+>>>>>>> libftprintf
 	while (nbr)
 	{
 		nbr /= base;
 		len++;
 	}
+<<<<<<< HEAD
 	return (len);
 }
 
@@ -332,10 +477,35 @@ int		print_oct(size_t n)
 	else
 		ft_putchar(n + '0');
 	return (i);
+=======
+	//if (options->show_sign && base == 10 && n.i >= 0)
+	//	len++;
+	//else if (options->space_before && base == 10 && n.i >= 0)
+	//	len++;
+	if (options->show_prefix)
+	{
+		 if (base == 16)
+			len += 2;
+	}
+	return (len);
+}
+
+
+void		print_oct(size_t n)
+{
+	if (n >= 8)
+	{
+		print_oct(n >> 3);
+		ft_putchar(n % 8 + '0');
+	}
+	else
+		ft_putchar(n + '0');
+>>>>>>> libftprintf
 }
 
 
 
+<<<<<<< HEAD
 int		print_hex_low(size_t n)
 {
 //	printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -455,6 +625,316 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 	}
 	else if (*ptr == 'p')
 		ret = print_pointer_addr((size_t)nbr);
+=======
+void		print_hex(size_t n, char a)
+{
+	if (n >= 16)
+	{
+		print_hex(n >> 4, a);
+		print_hex(n % 16, a);
+	}
+	else if (n >= 10 && n <= 15)
+		ft_putchar(n - 10 + a);
+	else
+		ft_putchar(n + '0');
+}
+
+
+void		print_dec(int n)
+{
+	//printf("--------------------------------------->%s\n", __FUNCTION__);
+	//printf("number: %zd\n", n);
+	//остальные типы срабатывают некорректно
+	unsigned nbr;
+	
+	if (n < 0)
+	{
+		ft_putchar('-');
+		nbr = -n;
+	}
+	else
+		nbr = n;	
+	if (nbr >= 10)
+	{
+		print_dec(nbr / 10);
+		ft_putchar(nbr % 10 + '0');
+	}
+	else
+		ft_putchar(nbr + '0');
+}
+
+int	fillnchar(int len, int width, char c)
+{
+	int i = 0;
+	while (len < width)
+	{
+		ft_putchar(c);
+		len++;
+		i++;
+	}
+	return (i);
+}
+
+size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
+{
+	t_number	nbr;
+	int		len;
+	int 		ret = 0;
+	if (!fmt)
+		exit(ERROR);
+	nbr.i = va_arg(*args, int);
+	if (!nbr.i && options->is_set_precision &&!options->precision && !options->show_prefix)
+	{
+		ret = fillnchar(0, options->width, ' ');
+		*res += ret;
+		return (ret);
+	}
+	len = ft_nbr_length(nbr, 8, options);
+
+	if (nbr.i != 0  && options->show_prefix)
+	{
+		if (options->precision < len)
+			options->precision = len + 1;
+	}
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero && !options->precision)
+				ret += fillnchar(len, options->width, '0');
+		else if (options->precision > len)
+			{
+				ret += fillnchar(options->precision, options->width, ' ');
+				ret += fillnchar(len, options->precision, '0');
+			}
+		else
+				ret += fillnchar(len, options->width, ' ');
+			print_oct(nbr.i);
+			ret += len;
+	}
+	
+	else if (options->width > len && options->left_align)
+	{
+			if (options->precision > len)
+				ret += fillnchar(len, options->precision, '0');
+			print_oct(nbr.i);
+			ret += len;
+			
+		ret += fillnchar(ret, options->width, ' ');
+	}
+	else
+	{
+			if (options->precision > len)
+				ret += fillnchar(len, options->precision, '0');
+			print_oct(nbr.i);
+			ret += len;
+	}
+	*res += ret;
+	return (ret);
+}
+
+size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res)
+{
+		t_number	nbr;
+	int		len;
+	char *ptr;
+	int ret = 0;
+
+	ptr = (char*)*fmt;	
+	nbr.i = va_arg(*args, int);
+	
+	if (nbr.i == 0)
+		(options->show_prefix = 0);
+	if (*ptr == 'p')
+		(options->show_prefix = 1);
+	if (!nbr.i && options->is_set_precision &&!options->precision)
+	{
+		if (*ptr == 'p')
+			{
+				ft_putstr("0x");
+				ret += 2;
+			}
+		ret += fillnchar(0, options->width, ' ');
+		*res += ret;
+		return (ret);
+	}
+	len = ft_nbr_length(nbr, 16, options);
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero && !options->precision)
+		{
+			if (options->show_prefix)
+			{
+				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+				ret += fillnchar(len, options->width, '0');
+				options->show_prefix = 0;
+			}
+			else
+			ret += fillnchar(len, options->width, '0');
+		}
+		else if (!(options->precision > len))
+			ret += fillnchar(len, options->width, ' ');
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+		if (options->precision > len)
+			ret += fillnchar(len, options->precision, '0');
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+		ret += len;
+	}
+	else if (options->width > len && options->left_align)
+	{
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+		if (options->precision > len)
+			ret += fillnchar(len, options->precision, '0');
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+		ret += len;
+		ret += fillnchar(ret, options->width, ' ');
+	}
+	else
+	{
+		if (options->show_prefix)
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+		if (options->precision > len)
+			ret += fillnchar(len, options->precision, '0');
+		print_hex(nbr.i, *ptr == 'X' ? 'A' : 'a');
+		ret += len;
+	}
+	*res += ret;
+	return (ret);
+}
+
+size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *res)
+{
+	t_number	nbr;
+	int		len;
+	int ret = 0;
+
+	if (!fmt)
+		exit(ERROR);
+	nbr.i = va_arg(*args, int);
+	if (!nbr.i && options->is_set_precision &&!options->precision)
+	{
+		ret = fillnchar(0, options->width, ' ');
+		*res += ret;
+		return (ret);
+	}
+	len = ft_nbr_length(nbr, 10, options);
+
+	
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero && !options->precision)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				ret += fillnchar(len, options->width, '0');
+				nbr.i = -nbr.i;
+			}
+			else
+			{
+				if (options->space_before)
+				{
+					ft_putchar(' ');
+					ret++;
+				}
+				else if (options->show_sign && nbr.i >= 0)
+				{
+					ft_putchar('+');
+					ret++;
+				}
+				ret += fillnchar(len + ret, options->width, '0');
+			}
+		}
+		else
+		{
+			if (options->precision < len) 
+				ret += fillnchar(len, options->width, ' ');
+			else if (options->precision > len && nbr.i >= 0)
+				ret += fillnchar(options->precision + options->show_sign, options->width, ' ');
+			else if (options->precision > len && nbr.i < 0)
+				ret += fillnchar(options->precision + 1, options->width, ' ');
+			if (options->show_sign && !options->fill_by_zero && nbr.i >= 0)
+			{
+				ft_putchar('+');
+				ret++;
+			}	
+			if (options->precision >= len)
+			{
+				if (nbr.i < 0)
+				{
+					ft_putchar('-');
+					nbr.i = -nbr.i;
+					ret++;
+					len--;
+				}
+				ret += fillnchar(len, options->precision, '0');
+			}
+		}
+			print_dec(nbr.i);
+			ret += len;
+	}
+
+
+
+
+
+	else if (options->width > len && options->left_align)
+	{
+		if (options->space_before && nbr.i > 0)
+			{
+				ft_putchar(' ');
+				ret++;
+			}
+		else if (options->show_sign && nbr.i >= 0)
+			{
+				ft_putchar('+');
+				ret++;
+			}
+		if (options->precision > len)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				nbr.i = -nbr.i;
+			}
+			ret += fillnchar(len, options->precision, '0');
+		}
+			print_dec(nbr.i);
+			ret += len;
+		ret += fillnchar(ret, options->width, ' ');
+	}
+
+
+
+
+	else
+	{
+		if(options->space_before && nbr.i > 0)
+			{
+				ft_putchar(' ');
+				ret++;
+			}
+		else if (options->show_sign && nbr.i >= 0)
+			{
+				ft_putchar('+');
+				ret++;
+			}
+		if (options->precision > len)
+		{
+			if (nbr.i < 0)
+			{
+				ft_putchar('-');
+				nbr.i = -nbr.i;
+				len--;
+				ret++;
+			}
+			ret += fillnchar(len, options->precision, '0');
+		}
+			print_dec(nbr.i);
+			ret += len;
+	}
+	*res += ret;
+>>>>>>> libftprintf
 	return (ret);
 }
 
@@ -463,23 +943,40 @@ size_t	ft_printf_putnbr(char **fmt, va_list *args, t_options *options)
 
 size_t	ft_wstrlen(wchar_t *wstr)
 {
+<<<<<<< HEAD
 	printf("--------------------------------------->%s\n", __FUNCTION__);
 	int size;
 	size_t len = 0;
 
 
 	size = size_bin(wstr[len]);
+=======
+	//int size;
+	size_t len = 0;
+
+
+	//size = size_bin(wstr[len]);
+>>>>>>> libftprintf
 	
 	while (wstr[len] != L'\0')
 		len++;
 	return (len);
 }
 
+<<<<<<< HEAD
 size_t	print_wstr(char **fmt, va_list *args, t_options *options)
+=======
+size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
+>>>>>>> libftprintf
 {
 	size_t i;
 	int size;
 
+<<<<<<< HEAD
+=======
+	if (!fmt || !options)
+		exit(ERROR);
+>>>>>>> libftprintf
 	wchar_t *wstr;
 	wstr = (wchar_t *)va_arg(*args, wchar_t*);
 	i = 0;
@@ -489,6 +986,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options)
 	
 	//printf(" = %d\n", size);
 	
+<<<<<<< HEAD
 	if (size <= 7)
 		 ft_putchar(wstr[i]);
 	else if (size <= 15)
@@ -497,12 +995,19 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options)
 		write_three_bytes(wstr[i]);
 	else
 		write_four_bytes(wstr[i]);
+=======
+	ft_putwchar(wstr[i]);
+>>>>>>> libftprintf
 	
 		//printf("in loop %zu\n", i);
 //		print(wstr[i]);
 		i++;
 
 		}
+<<<<<<< HEAD
+=======
+		*res += i;
+>>>>>>> libftprintf
 	return (i);
 }
 
@@ -535,6 +1040,11 @@ int		ft_parse_flags(char *fp, t_options *options)
 		}
 		i++;
 	}
+<<<<<<< HEAD
+=======
+	if (options->show_sign && options->space_before)
+		options->space_before = 0;
+>>>>>>> libftprintf
 	return (i);
 }
 
@@ -544,13 +1054,22 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 	int arg;
 
 	i = 0;
+<<<<<<< HEAD
+=======
+	while (ft_isdigit(fp[i]) || fp[i] == '*')
+	{
+>>>>>>> libftprintf
 	if (ft_isdigit(fp[i]))
 		{
 			options->width = ft_atoi(fp + i);
 			while (ft_isdigit(fp[i]))
 				i++;
 		}
+<<<<<<< HEAD
 	else if (*fp == '*')
+=======
+	if (fp[i] == '*')
+>>>>>>> libftprintf
 	{
 		arg = va_arg(*args, int);
 		if (arg < 0)
@@ -561,6 +1080,10 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 		options->width = arg;
 		i++;
 	}
+<<<<<<< HEAD
+=======
+	}
+>>>>>>> libftprintf
 	return (i);
 }
 
@@ -573,20 +1096,35 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 	if (fp[i] == '.')
 		{
 			i++;
+<<<<<<< HEAD
+=======
+			options->is_set_precision = 1;
+>>>>>>> libftprintf
 			if (ft_isdigit(fp[i]))
 			{
 				options->precision = ft_atoi(fp + i);
 				while (ft_isdigit(fp[i]))
 					i++;
 			}
+<<<<<<< HEAD
 			else if (*fp == '*')
+=======
+			if (fp[i] == '*')
+>>>>>>> libftprintf
 			{
 				arg = va_arg(*args, int);
 				if (arg >= 0)
 					options->precision = arg;
+<<<<<<< HEAD
 			}
 			else
 				options->precision = 0;
+=======
+				else
+					options->is_set_precision = 0;
+				i++;
+			}
+>>>>>>> libftprintf
 		}
 	return (i);
 }
@@ -636,6 +1174,7 @@ t_pf	ft_choose_type(e_conv conv)
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
+<<<<<<< HEAD
 	convert_functions[CONV_d] = &ft_printf_putnbr;
 	convert_functions[CONV_D] = &ft_printf_putnbr;
 	convert_functions[CONV_i] = &ft_printf_putnbr;
@@ -644,11 +1183,30 @@ t_pf	ft_choose_type(e_conv conv)
 	convert_functions[CONV_x] = &ft_printf_putnbr;
 	convert_functions[CONV_X] = &ft_printf_putnbr;
 	convert_functions[CONV_p] = &ft_printf_putnbr;
+=======
+	convert_functions[CONV_d] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_D] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_i] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_u] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_U] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_o] = &ft_printf_putnbr_oct;
+	convert_functions[CONV_O] = &ft_printf_putnbr_oct;
+	convert_functions[CONV_x] = &ft_printf_putnbr_hex;
+	convert_functions[CONV_X] = &ft_printf_putnbr_hex;
+	convert_functions[CONV_p] = &ft_printf_putnbr_hex;
+	//convert_functions[CONV_b] = &ft_printf_putnbr_bin;
+	//convert_functions[CONV_f] = &ft_prinft_putnbr_float;
+	//convert_functions[CONV_F] = &ft_prinft_putnbr_float;
+>>>>>>> libftprintf
 	convert_functions[CONV_C] = &ft_printf_putchar;
 	convert_functions[CONV_S] = &print_wstr;
 	return (convert_functions[conv]);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> libftprintf
 static int check_type(char c)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -664,17 +1222,27 @@ static int check_type(char c)
 		return (0);
 }
 
+<<<<<<< HEAD
 size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
+=======
+
+size_t	ft_parse_options(const char **format, va_list *args, int *res)
+>>>>>>> libftprintf
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	t_options *options;
 	char *fmtp;
 	t_pf ft_transformer;
+<<<<<<< HEAD
+=======
+
+>>>>>>> libftprintf
 	options = (t_options*)ft_memalloc(sizeof(t_options));
 	if (!options)
 		exit(ERROR);
 	fmtp = (char*)++(*format);
 	fmtp += ft_parse_flags(fmtp, options);
+<<<<<<< HEAD
 	fmtp += ft_parse_width(fmtp, args, options);	
 	fmtp += ft_parse_precision(fmtp, args, options);
 	fmtp += ft_parse_length(fmtp, options);
@@ -688,6 +1256,24 @@ size_t	ft_parse_options(const char **format, va_list *args/*, int *res*/)
 //		fmtp++;
 	return (fmtp - *format);
 
+=======
+	fmtp += ft_parse_width(fmtp, args, options);
+	fmtp += ft_parse_precision(fmtp, args, options);
+	fmtp += ft_parse_length(fmtp, options);
+	if (*fmtp != '\0')
+	{
+		if (check_type(*fmtp))
+		{
+			ft_transformer = ft_choose_type(*fmtp);
+			ft_transformer(&fmtp, args, options, res);
+		}
+		else
+				ft_printf_putchar(&fmtp, NULL, options, res);
+		if (options)
+			free(options);
+		return (fmtp - *format);
+	}
+>>>>>>> libftprintf
 return 0;
 }
 
@@ -702,6 +1288,7 @@ int		ft_printf(const char *format, ...)
 	while (*format)
 	{
 		if (*format == '%')
+<<<<<<< HEAD
 		{
 			if (*(format + 1) == '%')
 			{
@@ -711,6 +1298,9 @@ int		ft_printf(const char *format, ...)
 			else
 			format += ft_parse_options(&format, &args/*, &res*/);		
 		}
+=======
+			format += ft_parse_options(&format, &args, &res);
+>>>>>>> libftprintf
 		else
 		{
 			ft_putchar(*format);
@@ -722,6 +1312,7 @@ int		ft_printf(const char *format, ...)
 	return (res);
 }
 
+<<<<<<< HEAD
 /*
 **------------------------------------------MAIN------------------------------------------------------------
 */
@@ -861,3 +1452,5 @@ int main(void)
 	return 0;
 }
 
+=======
+>>>>>>> libftprintf
