@@ -722,7 +722,6 @@ int		ft_parse_length(char *fp, t_options *options)
 
 t_pf	ft_choose_type(e_conv conv)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	t_pf convert_functions[CONVERSIONS];
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
@@ -748,7 +747,6 @@ t_pf	ft_choose_type(e_conv conv)
 
 static int check_type(char c)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
 		return (1);
 	else if (c == 'p' || c == 'd' || c == 'D' || c == 'i')
@@ -764,7 +762,6 @@ static int check_type(char c)
 
 size_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	t_options *options;
 	char *fmtp;
 	t_pf ft_transformer;
@@ -796,7 +793,6 @@ return 0;
 
 int		ft_printf(const char *format, ...)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 
