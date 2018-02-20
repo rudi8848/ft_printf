@@ -1,33 +1,6 @@
 #include "includes/ft_printf.h"
 
-/*
-		ФОРМАТ:
-		%[флаги][ширина][.точность][размер]тип
-
-		 то есть при разборе строки после знака %
-		 проверяем сначала на флаги,
-		 ширина
-		 точность
-		 размер
-		 тип 
-*/
-
-
-/*
-	Для обработки численных значений можно использовать UNION. в нем может храниться только одно значение, но типов сколько угодно.
-	то есть тайпдефим юнион со всеми возможными типами, а в принтф_путнамбер по флажкам и типу приваеваем юниону значение ва_арг, а затем 
-	идем в ф-цию конвертации и печатаем
-*/
-size_t	unicode_masks[BIT_MASKS] = {
-	0,									//"0xxx xxxx",
-	0xC080,			//49280,			//"110x xxxx    10xx xxxx",
-	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
-	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
-};
-
-
 int	fillnchar(int len, int width, char c);
-
   
 int		ft_print_null_string(void)
 {
@@ -186,7 +159,6 @@ void    ft_putwchar(wchar_t chr)
 
 size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int symb;
 	char *ptr;
 
