@@ -7,6 +7,7 @@
 #include <locale.h>
 #include <wchar.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define ERROR -1
 
