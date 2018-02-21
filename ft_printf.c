@@ -321,7 +321,7 @@ void		print_hex(uintmax_t n, char a)
 }
 
 
-void		print_dec(intmax_t n)
+void		print_sdec(intmax_t n)
 {
 	uintmax_t	nbr;
 	
@@ -334,11 +334,22 @@ void		print_dec(intmax_t n)
 		nbr = n;	
 	if (nbr >= 10)
 	{
-		print_dec(nbr / 10);
+		print_sdec(nbr / 10);
 		ft_putchar(nbr % 10 + '0');
 	}
 	else
 		ft_putchar(nbr + '0');
+}
+
+void		print_udec(uintmax_t n)
+{	
+	if (n >= 10)
+	{
+		print_udec(n / 10);
+		ft_putchar(n % 10 + '0');
+	}
+	else
+		ft_putchar(n + '0');
 }
 
 int	fillnchar(int len, int width, char c)
@@ -490,7 +501,7 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	return (ret);
 }
 
-size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *res)
+size_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int *res)
 {
 	intmax_t	nbr;
 	int		len;
@@ -498,18 +509,9 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 
 	if (!fmt)
 		exit(ERROR);
-	/*
-	if (**fmt == 'u' || **fmt == 'U' || options->len_z)
-	{
-		nbr = ft_cut_unsigned(args, options);
-		len = ft_unbr_length(&nbr, 10, options);
-	}
-	else
-	{
-		*/
-		nbr = ft_cut_signed(args, options);
-		len = ft_snbr_length(&nbr, 10/*, options*/);
-	//}
+	nbr = ft_cut_signed(args, options);
+	len = ft_snbr_length(&nbr, 10/*, options*/);
+
 		if (!nbr && options->is_set_precision &&!options->precision)
 	{
 		ret = fillnchar(0, options->width, ' ');
@@ -566,7 +568,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 				ret += fillnchar(len, options->precision, '0');
 			}
 		}
-			print_dec(nbr);
+			print_sdec(nbr);
 			ret += len;
 	}
 
@@ -595,7 +597,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 			}
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_dec(nbr);
+			print_sdec(nbr);
 			ret += len;
 		ret += fillnchar(ret, options->width, ' ');
 	}
@@ -626,13 +628,88 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 			}
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_dec(nbr);
+			print_sdec(nbr);
 			ret += len;
 	}
 	*res += ret;
 	return (ret);
 }
 
+size_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
+{
+	uintmax_t	nbr;
+	int		len;
+	int ret = 0;
+
+	if (!fmt)
+		exit(ERROR);
+	nbr = ft_cut_unsigned(args, options);
+	len = ft_unbr_length(&nbr, 10/*, options*/);
+
+		if (!nbr && options->is_set_precision &&!options->precision)
+	{
+		ret = fillnchar(0, options->width, ' ');
+		*res += ret;
+		return (ret);
+	}
+	if (options->width > len && !options->left_align)
+	{
+		if (options->fill_by_zero && !options->precision)
+		{
+				
+				ret += fillnchar(len + ret, options->width, '0');
+		}
+		else
+		{
+			if (options->precision < len) 
+				ret += fillnchar(len, options->width, ' ');
+			else if (options->precision > len && nbr)
+				ret += fillnchar(options->precision + options->show_sign, options->width, ' ');
+			
+			if (options->precision >= len)
+			{
+				
+				ret += fillnchar(len, options->precision, '0');
+			}
+		}
+			print_udec(nbr);
+			ret += len;
+	}
+
+
+
+
+
+	else if (options->width > len && options->left_align)
+	{
+		
+		if (options->precision > len)
+		{
+			
+			ret += fillnchar(len, options->precision, '0');
+		}
+			print_udec(nbr);
+			ret += len;
+		ret += fillnchar(ret, options->width, ' ');
+	}
+
+
+
+
+	else
+	{
+		
+		if (options->precision > len)
+		{
+			
+			ret += fillnchar(len, options->precision, '0');
+		}
+			print_udec(nbr);
+			ret += len;
+	}
+	*res += ret;
+	return (ret);
+}
 
 
 
@@ -647,13 +724,20 @@ size_t	ft_wstrlen(wchar_t *wstr)
 
 size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
+	if (fmt && args && options && res)
+	return 1;
+else
+	return 0;
+	/*
 	size_t i;
+	wchar_t *wstr = NULL;
 
+	i = 0;
 	if (!fmt || !options)
 		exit(ERROR);
-	wchar_t *wstr;
 	wstr = (wchar_t *)va_arg(*args, wchar_t*);
-	i = 0;
+	if (!wstr)
+		exit(ERROR);
 	while (wstr[i] != L'\0')
 	{
 	
@@ -667,6 +751,7 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 		if (wstr)
 			free(wstr);
 	return (i);
+	*/
 }
 
 /*
@@ -805,11 +890,11 @@ t_pf	ft_choose_type(e_conv conv)
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
-	convert_functions[CONV_d] = &ft_printf_putnbr_dec;
-	convert_functions[CONV_D] = &ft_printf_putnbr_dec;
-	convert_functions[CONV_i] = &ft_printf_putnbr_dec;
-	convert_functions[CONV_u] = &ft_printf_putnbr_dec;
-	convert_functions[CONV_U] = &ft_printf_putnbr_dec;
+	convert_functions[CONV_d] = &ft_printf_putnbr_sdec;
+	convert_functions[CONV_D] = &ft_printf_putnbr_sdec;
+	convert_functions[CONV_i] = &ft_printf_putnbr_sdec;
+	convert_functions[CONV_u] = &ft_printf_putnbr_udec;
+	convert_functions[CONV_U] = &ft_printf_putnbr_udec;
 	convert_functions[CONV_o] = &ft_printf_putnbr_oct;
 	convert_functions[CONV_O] = &ft_printf_putnbr_oct;
 	convert_functions[CONV_x] = &ft_printf_putnbr_hex;
