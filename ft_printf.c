@@ -244,18 +244,17 @@ int	ft_unbr_length(uintmax_t *n,int  base, t_options *options)
 
 	len = 0;
 	nbr = 0;
-	if (n == 0)
+	if (*n == 0)
 		len++;
-	nbr = *n;
-	while (nbr)
+	else
 	{
-		nbr /= base;
-		len++;
+		nbr = *n;
+		while (nbr)
+		{
+			nbr /= base;
+			len++;
+		}
 	}
-	//if (options->show_sign && base == 10 && n.i >= 0)
-		//	len++;
-	//else if (options->space_before && base == 10 && n.i >= 0)
-		//	len++;
 	if (options->show_prefix)
 	{
 		 if (base == 16)
@@ -270,14 +269,14 @@ int	ft_snbr_length(intmax_t *n,int  base, t_options *options)
 
 	len = 0;
 	nbr = 0;
-	if (*n < 0)
+	if (*n == 0)
+		len++;
+	else if (*n < 0)
 	{
 		if (base == 10)
 			len++;
 		nbr = - *n;
 	}
-	else if (n == 0)
-		len++;
 	else
 		nbr = *n;
 	while (nbr)
@@ -494,16 +493,24 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 
 	if (!fmt)
 		exit(ERROR);
-	nbr = ft_cut_signed(args, options);
-	if (!nbr && options->is_set_precision &&!options->precision)
+	/*
+	if (**fmt == 'u' || **fmt == 'U' || options->len_z)
+	{
+		nbr = ft_cut_unsigned(args, options);
+		len = ft_unbr_length(&nbr, 10, options);
+	}
+	else
+	{
+		*/
+		nbr = ft_cut_signed(args, options);
+		len = ft_snbr_length(&nbr, 10, options);
+	//}
+		if (!nbr && options->is_set_precision &&!options->precision)
 	{
 		ret = fillnchar(0, options->width, ' ');
 		*res += ret;
 		return (ret);
 	}
-	len = ft_snbr_length(&nbr, 10, options);
-
-	
 	if (options->width > len && !options->left_align)
 	{
 		if (options->fill_by_zero && !options->precision)
