@@ -913,11 +913,11 @@ static int check_type(char c, t_options *options)
 {
 	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
 		return (1);
-	else if (c == 'p' || c == 'd' || c == 'i')
+	else if ( c == 'd' || c == 'i')
 		return (1);
 	else if (c == 'o'|| c == 'u' || c == 'x' || c == 'X')
 		return (1);
-	else if (c == 'D' || c == 'U'  || c == 'O')
+	else if (c == 'D' || c == 'U'  || c == 'O' || c == 'p')
 	{
 		options->len_l = 1;
 		return (1);
