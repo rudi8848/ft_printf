@@ -13,19 +13,8 @@
 
 typedef union u_number
 {
-	int i;							//<no>
-	unsigned u;						//<no>
-	size_t st;						//z
-	long int l; 						//ld = D
-	unsigned long int ul;			//l  O = lo, U = lu
-	long long int ll;				//ll
-	unsigned long long int ull;	//ll
-	short sh;			//h
-	unsigned short ush;	//h
-	intmax_t ix; 			//j
-	uintmax_t uix;			//j
-	char ch;				//hh
-	unsigned char uch;		//hh
+	intmax_t 	i;
+	uintmax_t 	u;
 } t_number;
 
 

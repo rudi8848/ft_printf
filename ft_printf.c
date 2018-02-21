@@ -237,7 +237,7 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 		nbr = (int)nbr;
 	return (nbr);
 }
-int	ft_unbr_length(uintmax_t *n,int  base, t_options *options)
+int	ft_unbr_length(uintmax_t *n,int  base/*, t_options *options*/)
 {
 	int len;
 	uintmax_t nbr;
@@ -255,14 +255,14 @@ int	ft_unbr_length(uintmax_t *n,int  base, t_options *options)
 			len++;
 		}
 	}
-	if (options->show_prefix)
+	/*if (options->show_prefix)
 	{
 		 if (base == 16)
 			len += 2;
-	}
+	}*/
 	return (len);
 }
-int	ft_snbr_length(intmax_t *n,int  base, t_options *options)
+int	ft_snbr_length(intmax_t *n,int  base/*, t_options *options*/)
 {
 	int len;
 	intmax_t nbr;
@@ -288,11 +288,6 @@ int	ft_snbr_length(intmax_t *n,int  base, t_options *options)
 		//	len++;
 	//else if (options->space_before && base == 10 && n.i >= 0)
 		//	len++;
-	if (options->show_prefix)
-	{
-		 if (base == 16)
-			len += 2;
-	}
 	return (len);
 }
 
@@ -328,7 +323,7 @@ void		print_hex(uintmax_t n, char a)
 
 void		print_dec(intmax_t n)
 {
-	uintmax_t nbr;
+	uintmax_t	nbr;
 	
 	if (n < 0)
 	{
@@ -372,7 +367,7 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 		*res += ret;
 		return (ret);
 	}
-	len = ft_unbr_length(&nbr, 8, options);
+	len = ft_unbr_length(&nbr, 8/*, options*/);
 
 	if (nbr != 0  && options->show_prefix)
 	{
@@ -435,11 +430,11 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 				ft_putstr("0x");
 				ret += 2;
 			}
-		ret += fillnchar(0, options->width, ' ');
+		ret += fillnchar(ret, options->width, ' ');
 		*res += ret;
 		return (ret);
 	}
-	len = ft_unbr_length(&nbr, 16, options);
+	len = ft_unbr_length(&nbr, 16/*, options*/);
 	if (options->width > len && !options->left_align)
 	{
 		if (options->fill_by_zero && !options->precision)
@@ -447,16 +442,20 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 			if (options->show_prefix)
 			{
 				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
-				ret += fillnchar(len, options->width, '0');
+				ret += 2;
+				ret += fillnchar(len + ret, options->width, '0');
 				options->show_prefix = 0;
 			}
 			else
 			ret += fillnchar(len, options->width, '0');
 		}
 		else if (!(options->precision > len))
-			ret += fillnchar(len, options->width, ' ');
+			ret += fillnchar(len + options->show_prefix * 2, options->width, ' ');
 		if (options->show_prefix)
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			{
+				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+				ret += 2;
+			}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -465,7 +464,10 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	else if (options->width > len && options->left_align)
 	{
 		if (options->show_prefix)
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			{
+				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+				ret += 2;
+			}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -475,7 +477,10 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	else
 	{
 		if (options->show_prefix)
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			{
+				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+				ret += 2;
+			}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -503,7 +508,7 @@ size_t	ft_printf_putnbr_dec(char **fmt, va_list *args, t_options *options, int *
 	{
 		*/
 		nbr = ft_cut_signed(args, options);
-		len = ft_snbr_length(&nbr, 10, options);
+		len = ft_snbr_length(&nbr, 10/*, options*/);
 	//}
 		if (!nbr && options->is_set_precision &&!options->precision)
 	{
@@ -659,7 +664,8 @@ size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 
 		}
 		*res += i;
-		free(wstr);
+		if (wstr)
+			free(wstr);
 	return (i);
 }
 
@@ -818,16 +824,19 @@ t_pf	ft_choose_type(e_conv conv)
 }
 
 
-static int check_type(char c)
+static int check_type(char c, t_options *options)
 {
 	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
 		return (1);
-	else if (c == 'p' || c == 'd' || c == 'D' || c == 'i')
+	else if (c == 'p' || c == 'd' || c == 'i')
 		return (1);
-	else if (c == 'o' || c == 'O' || c == 'u' || c == 'U')
+	else if (c == 'o'|| c == 'u' || c == 'x' || c == 'X')
 		return (1);
-	else if (c == 'x' || c == 'X')
+	else if (c == 'D' || c == 'U'  || c == 'O')
+	{
+		options->len_l = 1;
 		return (1);
+	}
 	else
 		return (0);
 }
@@ -849,7 +858,7 @@ size_t	ft_parse_options(const char **format, va_list *args, int *res)
 	fmtp += ft_parse_length(fmtp, options);
 	if (*fmtp != '\0')
 	{
-		if (check_type(*fmtp))
+		if (check_type(*fmtp, options))
 		{
 			ft_transformer = ft_choose_type(*fmtp);
 			ft_transformer(&fmtp, args, options, res);
