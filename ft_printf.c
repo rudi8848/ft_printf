@@ -161,13 +161,14 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 {
 	int symb;
 	char *ptr;
+	int ret = 0;
 
 	if (options->width && !options->left_align)
 		{
 			if (options->fill_by_zero)
-				*res += fillnchar(1, options->width, '0');
+				ret += fillnchar(1, options->width, '0');
 			else
-				*res += fillnchar(1, options->width, ' ');
+				ret += fillnchar(1, options->width, ' ');
 		}
 	ptr = *fmt;
 	if (args)
@@ -177,13 +178,15 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 			ft_putchar(symb);
 		else
 			ft_putwchar(symb);
+		
 	}
 	else
 		ft_putchar(*ptr);
+	ret += 1;
 	if (options->width && options->left_align)
-		*res += fillnchar(1, options->width, ' ');
-	*res += 1;
-	return (1);
+		ret += fillnchar(1, options->width, ' ');
+	*res += ret;
+	return (ret);
 }
 //int		print_wstr(int *wstr);
 
@@ -760,24 +763,31 @@ else
 
 int		ft_parse_flags(char *fp, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	int i;
 
 	i = 0;
+	
 	while (fp[i] == '-' || fp[i] == '+' || fp[i] == ' ' || fp[i] == '#' || fp[i] == '0' )
 	{
-		if(fp[i] == '+')
-			options->show_sign = 1;
-		else if (fp[i] == ' ')
-			options->space_before = 1;
-		else if (fp[i] == '#')
-			options->show_prefix = 1;
-		else if (fp[i] == '0')
-			options->fill_by_zero = 1;
-		else if (fp[i] == '-')
+		if (fp[i] && fp[i + 1])
 		{
-				options->left_align = 1;
-				options->fill_by_zero = 0;
+			if(fp[i] == '+')
+				options->show_sign = 1;
+			else if (fp[i] == ' ')
+				options->space_before = 1;
+			else if (fp[i] == '#')
+				options->show_prefix = 1;
+			else if (fp[i] == '0')
+				options->fill_by_zero = 1;
+			else if (fp[i] == '-')
+			{
+					options->left_align = 1;
+					options->fill_by_zero = 0;
+			}
 		}
+		else
+			return i;
 		i++;
 	}
 	if (options->show_sign && options->space_before)
@@ -787,10 +797,13 @@ int		ft_parse_flags(char *fp, t_options *options)
 
 int		ft_parse_width(char *fp, va_list *args, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	int i;
 	int arg;
 
 	i = 0;
+	if (fp[i])
+	{
 	while (ft_isdigit(fp[i]) || fp[i] == '*')
 	{
 	if (ft_isdigit(fp[i]))
@@ -811,16 +824,18 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 		i++;
 	}
 	}
+}
 	return (i);
 }
 
 int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	int i;
 	int arg;
 
 	i = 0;
-	if (fp[i] == '.')
+	if (fp[i] && fp[i] == '.')
 		{
 			i++;
 			options->is_set_precision = 1;
@@ -845,9 +860,12 @@ int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 
 int		ft_parse_length(char *fp, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	int i;
 
 	i = 0;
+	if (fp[i])
+	{
 	if (fp[i] == 'h')
 	{
 		i++;
@@ -878,11 +896,13 @@ int		ft_parse_length(char *fp, t_options *options)
 		options->len_z = 1;
 		i++;
 	}
+}
 	return (i);
 }
 
 t_pf	ft_choose_type(e_conv conv, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	t_pf convert_functions[CONVERSIONS];
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
@@ -914,6 +934,7 @@ t_pf	ft_choose_type(e_conv conv, t_options *options)
 
 static int check_type(char c, t_options *options)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
 		return (1);
 	else if ( c == 'd' || c == 'i')
@@ -932,6 +953,7 @@ static int check_type(char c, t_options *options)
 
 size_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	t_options *options;
 	char *fmtp;
 	t_pf ft_transformer;
@@ -967,6 +989,7 @@ return 0;
 
 int		ft_printf(const char *format, ...)
 {
+	printf("-------------------%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 	char		*ptr;
@@ -979,9 +1002,8 @@ int		ft_printf(const char *format, ...)
 		{
 			ptr = (char*)format + 1;
 			if (!*ptr)
-				return 0;
+				return res;
 			format += ft_parse_options(&format, &args, &res);
-			
 		}
 		else
 		{
