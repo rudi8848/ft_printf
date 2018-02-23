@@ -760,12 +760,12 @@ size_t	ft_wstrlen(wchar_t *wstr)
 
 ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
-	/*
+	
 	if (fmt && args && options && res)
 	return 1;
 else
 	return 0;
-	*/
+	/*
 	size_t i;
 	wchar_t *wstr = NULL;
 	int ret = 0;
@@ -788,7 +788,7 @@ else
 		*res += ret;
 	
 	return (ret);
-	
+	*/
 }
 
 /*
