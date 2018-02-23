@@ -167,7 +167,7 @@ int    ft_putwchar(wchar_t chr)
         ft_putchar(((chr >> 6) & 0x3F) + 0x80);
         ft_putchar((chr & 0x3F) + 0x80);
     }
-    */
+    
     else if (chr <= 0xFF)
     {
     	if (MB_CUR_MAX > 1)
@@ -177,7 +177,7 @@ int    ft_putwchar(wchar_t chr)
     	}
     	else
     		exit (-1);
-    }
+    }*/
     else if (chr <= 0x7FF)
     		return write_two_bytes(chr);
 	else if (chr <= 0xFFFF)
@@ -760,12 +760,12 @@ size_t	ft_wstrlen(wchar_t *wstr)
 
 ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
-	
+	/*
 	if (fmt && args && options && res)
 	return 1;
 else
 	return 0;
-	/*
+	*/
 	size_t i;
 	wchar_t *wstr = NULL;
 	int ret = 0;
@@ -775,7 +775,7 @@ else
 		exit(ERROR);
 	wstr = (wchar_t *)va_arg(*args, wchar_t*);
 	if (!wstr)
-		exit(ERROR);
+		ft_print_null_string();
 	while (wstr[i] != L'\0')
 	{
 	
@@ -788,7 +788,7 @@ else
 		*res += ret;
 	
 	return (ret);
-	*/
+	
 }
 
 /*
