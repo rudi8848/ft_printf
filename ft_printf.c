@@ -1,5 +1,12 @@
 #include "includes/ft_printf.h"
 
+size_t	unicode_masks[BIT_MASKS] = {
+	0,									//"0xxx xxxx",
+	0xC080,			//49280,			//"110x xxxx    10xx xxxx",
+	0xE08080,		//14712960,			//"1110 xxxx    10xx xxxx    10xx xxxx",
+	0xF0808080		//4034953344		//"1111 0xxx    10xx xxxx    10xx xxxx    10xx xxxx"
+};
+
 int	fillnchar(int len, int width, char c);
 static int check_type(char c, t_options *options);
   
@@ -9,7 +16,7 @@ int		ft_print_null_string(void)
 	return (6);
 }
 
-size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
 {
 	int len;
 	int ret = 0;
@@ -57,7 +64,7 @@ size_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res
 	return (len);
 }
 
-/*
+
 int		write_two_bytes(size_t symb)
 {
 	//printf("--------------------------------------->%s\n", __FUNCTION__);
@@ -132,12 +139,16 @@ int		write_four_bytes(size_t symb)
 	res++;
 	return (res);
 }
-*/
 
-void    ft_putwchar(wchar_t chr)
+
+int    ft_putwchar(wchar_t chr)
 {
     if (chr <= 0x7F)
+    
         ft_putchar(chr);
+    	
+    
+    /*
     else if (chr <= 0x7FF)
     {
         ft_putchar((chr >> 6) + 0xC0);
@@ -156,9 +167,27 @@ void    ft_putwchar(wchar_t chr)
         ft_putchar(((chr >> 6) & 0x3F) + 0x80);
         ft_putchar((chr & 0x3F) + 0x80);
     }
+    */
+    else if (chr <= 0xFF)
+    {
+    	if (MB_CUR_MAX > 1)
+    	{
+    		write(1, &chr, 1);
+    		return 1;
+    	}
+    	else
+    		exit (-1);
+    }
+    else if (chr <= 0x7FF)
+    		return write_two_bytes(chr);
+	else if (chr <= 0xFFFF)
+		return write_three_bytes(chr);
+	else if (chr <= 0x10FFFF)
+		return write_four_bytes(chr);
+	return (1);
 }
 
-size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
 {
 	int symb;
 	char *ptr;
@@ -175,15 +204,19 @@ size_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *re
 	if (args)
 	{
 		symb = va_arg(*args, int);
-		if (*ptr == 'c')
+		if (*ptr == 'c' && !options->len_l)
+		{
 			ft_putchar(symb);
+			ret += 1;
+		}
 		else
-			ft_putwchar(symb);
-		
+				ret += ft_putwchar(symb);
 	}
 	else
+	{
 		ft_putchar(*ptr);
-	ret += 1;
+		ret += 1;
+	}
 	if (options->width && options->left_align)
 		ret += fillnchar(1, options->width, ' ');
 	*res += ret;
@@ -243,7 +276,7 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 	else if (options->len_j)
 		nbr = (intmax_t)nbr;
 	else if (options->len_z)
-		nbr = (long long)nbr;
+		nbr = (ssize_t)nbr;
 	else
 		nbr = (int)nbr;
 	return (nbr);
@@ -367,7 +400,7 @@ int	fillnchar(int len, int width, char c)
 	return (i);
 }
 
-size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
 {
 	uintmax_t	nbr;
 	int		len;
@@ -423,7 +456,7 @@ size_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *
 	return (ret);
 }
 
-size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res)
 {
 	uintmax_t	nbr;
 	int		len;
@@ -504,7 +537,7 @@ size_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *
 	return (ret);
 }
 
-size_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int *res)
 {
 	intmax_t	nbr;
 	int		len;
@@ -638,7 +671,7 @@ size_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int 
 	return (ret);
 }
 
-size_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
 {
 	uintmax_t	nbr;
 	int		len;
@@ -725,15 +758,17 @@ size_t	ft_wstrlen(wchar_t *wstr)
 	return (len);
 }
 
-size_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
+	/*
 	if (fmt && args && options && res)
 	return 1;
 else
 	return 0;
-	/*
+	*/
 	size_t i;
 	wchar_t *wstr = NULL;
+	int ret = 0;
 
 	i = 0;
 	if (!fmt || !options)
@@ -745,15 +780,15 @@ else
 	{
 	
 	
-	ft_putwchar(wstr[i]);
+	ret += ft_putwchar(wstr[i]);
 	
 		i++;
 
 		}
-		*res += i;
+		*res += ret;
 	
-	return (i);
-	*/
+	return (ret);
+	
 }
 
 /*
@@ -956,7 +991,7 @@ static int check_type(char c, t_options *options)
 }
 
 
-size_t	ft_parse_options(const char **format, va_list *args, int *res)
+ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
 	//printf("-------------------%s\n", __FUNCTION__);
 	t_options *options;

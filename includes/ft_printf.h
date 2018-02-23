@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <locale.h>
 #include <wchar.h>
-#include <stdint.h>
+//#include <stdint.h>
 #include <inttypes.h>
+#include <sys/types.h>
 
 #define ERROR -1
 
@@ -56,7 +57,7 @@ typedef		struct s_options
 }					t_options;
 
 
-typedef		size_t(*t_pf)(char **, va_list*, t_options*, int *res);
+typedef		ssize_t(*t_pf)(char **, va_list*, t_options*, int *res);
 
 
 typedef				enum
