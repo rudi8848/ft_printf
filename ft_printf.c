@@ -28,46 +28,45 @@ ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *re
 	char *tmp = NULL;
 	if (str)
 	{
-			len = ft_strlen(str);
-			if (options->is_set_precision && options->precision < len)
-			{
-				tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
-				tmp = ft_strncpy(tmp, str, options->precision);
-				len = options->precision;
-			}
-			if (len < options->width && !options->left_align)
-			{
-				if (options->fill_by_zero)
-					ret += fillnchar(len, options->width, '0');
-				else
-					ret += fillnchar(len, options->width, ' ');
-				tmp ? ft_putstr(tmp) : ft_putstr(str);
-				ret += len;
-			}
-			else if (len < options->width && options->left_align)
-			{
-				tmp ? ft_putstr(tmp) : ft_putstr(str);
-				ret += len;
-				ret += fillnchar(ret, options->width, ' ');
-			}
-			else
-			{
-				tmp ? ft_putstr(tmp) : ft_putstr(str);
-				ret += len;
-			}
-			*res += ret;
-			if (tmp)
-				free(tmp);
+		len = ft_strlen(str);
+		if (options->is_set_precision && options->precision < len)
+		{
+			tmp = (char*)ft_memalloc((options->precision + 1)*sizeof(char));
+			tmp = ft_strncpy(tmp, str, options->precision);
+			len = options->precision;
 		}
+		if (len < options->width && !options->left_align)
+		{
+			if (options->fill_by_zero)
+				ret += fillnchar(len, options->width, '0');
+			else
+				ret += fillnchar(len, options->width, ' ');
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
+			ret += len;
+		}
+		else if (len < options->width && options->left_align)
+		{
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
+			ret += len;
+			ret += fillnchar(ret, options->width, ' ');
+		}
+		else
+		{
+			tmp ? ft_putstr(tmp) : ft_putstr(str);
+			ret += len;
+		}
+		*res += ret;
+		if (tmp)
+			free(tmp);
+	}
 	else
-			*res += ft_print_null_string();
+		*res += ft_print_null_string();
 	return (len);
 }
 
 
 int		write_two_bytes(size_t symb)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o2;
 	unsigned char 	o1;
@@ -87,7 +86,6 @@ int		write_two_bytes(size_t symb)
 
 int		write_three_bytes(size_t symb)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o3;
 	unsigned char 	o2;
@@ -111,7 +109,6 @@ int		write_three_bytes(size_t symb)
 
 int		write_four_bytes(size_t symb)
 {
-	//printf("--------------------------------------->%s\n", __FUNCTION__);
 	int 			res;
 	unsigned char 	o4;
 	unsigned char 	o3;
@@ -141,13 +138,10 @@ int		write_four_bytes(size_t symb)
 }
 
 
-int    ft_putwchar(wchar_t chr)
+int		ft_putwchar(wchar_t chr)
 {
-    if (chr <= 0x7F)
-    
+	if (chr <= 0x7F)
         ft_putchar(chr);
-    	
-    
     /*
     else if (chr <= 0x7FF)
     {
@@ -178,8 +172,8 @@ int    ft_putwchar(wchar_t chr)
     	else
     		exit (-1);
     }*/
-    else if (chr <= 0x7FF)
-    		return write_two_bytes(chr);
+	else if (chr <= 0x7FF)
+		return write_two_bytes(chr);
 	else if (chr <= 0xFFFF)
 		return write_three_bytes(chr);
 	else if (chr <= 0x10FFFF)
@@ -194,12 +188,12 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 	int ret = 0;
 
 	if (options->width && !options->left_align)
-		{
-			if (options->fill_by_zero)
-				ret += fillnchar(1, options->width, '0');
-			else
-				ret += fillnchar(1, options->width, ' ');
-		}
+	{
+		if (options->fill_by_zero)
+			ret += fillnchar(1, options->width, '0');
+		else
+			ret += fillnchar(1, options->width, ' ');
+	}
 	ptr = *fmt;
 	if (args)
 	{
@@ -235,8 +229,6 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 **------------------------------------- NUMBER CONVERSIONS ------------------------------------------------
 */
 
-
-//-----------------------------------------------------------
 
 uintmax_t	ft_cut_unsigned(va_list *args, t_options *options)
 {
@@ -282,7 +274,7 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 	return (nbr);
 }
 
-int	ft_unbr_length(uintmax_t *n,int  base/*, t_options *options*/)
+int		ft_unbr_length(uintmax_t *n,int  base/*, t_options *options*/)
 {
 	int len;
 	uintmax_t nbr;
@@ -302,7 +294,7 @@ int	ft_unbr_length(uintmax_t *n,int  base/*, t_options *options*/)
 	}
 	return (len);
 }
-int	ft_snbr_length(intmax_t *n,int  base/*, t_options *options*/)
+int		ft_snbr_length(intmax_t *n,int  base/*, t_options *options*/)
 {
 	int len;
 	intmax_t nbr;
@@ -327,8 +319,7 @@ int	ft_snbr_length(intmax_t *n,int  base/*, t_options *options*/)
 	return (len);
 }
 
-
-void		print_oct(uintmax_t n)
+void	print_oct(uintmax_t n)
 {
 	if (n >= 8)
 	{
@@ -339,11 +330,7 @@ void		print_oct(uintmax_t n)
 		ft_putchar(n + '0');
 }
 
-
-
-
-
-void		print_hex(uintmax_t n, char a)
+void	print_hex(uintmax_t n, char a)
 {
 	if (n >= 16)
 	{
@@ -357,10 +344,10 @@ void		print_hex(uintmax_t n, char a)
 }
 
 
-void		print_sdec(intmax_t n)
+void	print_sdec(intmax_t n)
 {
 	uintmax_t	nbr;
-	
+
 	if (n < 0)
 	{
 		ft_putchar('-');
@@ -377,7 +364,7 @@ void		print_sdec(intmax_t n)
 		ft_putchar(nbr + '0');
 }
 
-void		print_udec(uintmax_t n)
+void	print_udec(uintmax_t n)
 {	
 	if (n >= 10)
 	{
@@ -388,7 +375,7 @@ void		print_udec(uintmax_t n)
 		ft_putchar(n + '0');
 }
 
-int	fillnchar(int len, int width, char c)
+int		fillnchar(int len, int width, char c)
 {
 	int i = 0;
 	while (len < width)
@@ -424,33 +411,32 @@ ssize_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int 
 	if (options->width > len && !options->left_align)
 	{
 		if (options->fill_by_zero && !options->precision)
-				ret += fillnchar(len, options->width, '0');
+			ret += fillnchar(len, options->width, '0');
 		else if (options->precision > len)
-			{
-				ret += fillnchar(options->precision, options->width, ' ');
-				ret += fillnchar(len, options->precision, '0');
-			}
+		{
+			ret += fillnchar(options->precision, options->width, ' ');
+			ret += fillnchar(len, options->precision, '0');
+		}
 		else
-				ret += fillnchar(len, options->width, ' ');
-			print_oct(nbr);
-			ret += len;
+			ret += fillnchar(len, options->width, ' ');
+		print_oct(nbr);
+		ret += len;
 	}
-	
+
 	else if (options->width > len && options->left_align)
 	{
-			if (options->precision > len)
-				ret += fillnchar(len, options->precision, '0');
-			print_oct(nbr);
-			ret += len;
-			
+		if (options->precision > len)
+			ret += fillnchar(len, options->precision, '0');
+		print_oct(nbr);
+		ret += len;		
 		ret += fillnchar(ret, options->width, ' ');
 	}
 	else
 	{
-			if (options->precision > len)
-				ret += fillnchar(len, options->precision, '0');
-			print_oct(nbr);
-			ret += len;
+		if (options->precision > len)
+			ret += fillnchar(len, options->precision, '0');
+		print_oct(nbr);
+		ret += len;
 	}
 	*res += ret;
 	return (ret);
@@ -465,7 +451,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 
 	ptr = (char*)*fmt;	
 	nbr = ft_cut_unsigned(args, options);
-	
+
 	if (nbr == 0)
 		(options->show_prefix = 0);
 	if (*ptr == 'p')
@@ -473,10 +459,10 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	if (!nbr && options->is_set_precision &&!options->precision)
 	{
 		if (*ptr == 'p')
-			{
-				ft_putstr("0x");
-				ret += 2;
-			}
+		{
+			ft_putstr("0x");
+			ret += 2;
+		}
 		ret += fillnchar(ret, options->width, ' ');
 		*res += ret;
 		return (ret);
@@ -499,10 +485,10 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 		else if (!(options->precision > len))
 			ret += fillnchar(len + options->show_prefix * 2, options->width, ' ');
 		if (options->show_prefix)
-			{
-				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
-				ret += 2;
-			}
+		{
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			ret += 2;
+		}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -511,10 +497,10 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	else if (options->width > len && options->left_align)
 	{
 		if (options->show_prefix)
-			{
-				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
-				ret += 2;
-			}
+		{
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			ret += 2;
+		}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -524,10 +510,10 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	else
 	{
 		if (options->show_prefix)
-			{
-				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
-				ret += 2;
-			}
+		{
+			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			ret += 2;
+		}
 		if (options->precision > len)
 			ret += fillnchar(len, options->precision, '0');
 		print_hex(nbr, *ptr == 'X' ? 'A' : 'a');
@@ -548,7 +534,7 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 	nbr = ft_cut_signed(args, options);
 	len = ft_snbr_length(&nbr, 10/*, options*/);
 
-		if (!nbr && options->is_set_precision &&!options->precision)
+	if (!nbr && options->is_set_precision &&!options->precision)
 	{
 		ret = fillnchar(0, options->width, ' ');
 		*res += ret;
@@ -608,22 +594,18 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 			ret += len;
 	}
 
-
-
-
-
 	else if (options->width > len && options->left_align)
 	{
 		if (options->space_before && nbr > 0)
-			{
-				ft_putchar(' ');
-				ret++;
-			}
+		{
+			ft_putchar(' ');
+			ret++;
+		}
 		else if (options->show_sign && nbr >= 0)
-			{
-				ft_putchar('+');
-				ret++;
-			}
+		{
+			ft_putchar('+');
+			ret++;
+		}
 		if (options->precision > len)
 		{
 			if (nbr < 0)
@@ -633,26 +615,22 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 			}
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_sdec(nbr);
-			ret += len;
+		print_sdec(nbr);
+		ret += len;
 		ret += fillnchar(ret, options->width, ' ');
 	}
-
-
-
-
 	else
 	{
 		if(options->space_before && nbr > 0)
-			{
-				ft_putchar(' ');
-				ret++;
-			}
+		{
+			ft_putchar(' ');
+			ret++;
+		}
 		else if (options->show_sign && nbr >= 0)
-			{
-				ft_putchar('+');
-				ret++;
-			}
+		{
+			ft_putchar('+');
+			ret++;
+		}
 		if (options->precision > len)
 		{
 			if (nbr < 0)
@@ -664,8 +642,8 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 			}
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_sdec(nbr);
-			ret += len;
+		print_sdec(nbr);
+		ret += len;
 	}
 	*res += ret;
 	return (ret);
@@ -682,7 +660,7 @@ ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int
 	nbr = ft_cut_unsigned(args, options);
 	len = ft_unbr_length(&nbr, 10/*, options*/);
 
-		if (!nbr && options->is_set_precision &&!options->precision)
+	if (!nbr && options->is_set_precision &&!options->precision)
 	{
 		ret = fillnchar(0, options->width, ' ');
 		*res += ret;
@@ -692,8 +670,7 @@ ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int
 	{
 		if (options->fill_by_zero && !options->precision)
 		{
-				
-				ret += fillnchar(len + ret, options->width, '0');
+			ret += fillnchar(len + ret, options->width, '0');
 		}
 		else
 		{
@@ -704,52 +681,38 @@ ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int
 			
 			if (options->precision >= len)
 			{
-				
 				ret += fillnchar(len, options->precision, '0');
 			}
 		}
-			print_udec(nbr);
-			ret += len;
+		print_udec(nbr);
+		ret += len;
 	}
-
-
-
-
 
 	else if (options->width > len && options->left_align)
 	{
-		
 		if (options->precision > len)
 		{
-			
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_udec(nbr);
-			ret += len;
+		print_udec(nbr);
+		ret += len;
 		ret += fillnchar(ret, options->width, ' ');
 	}
 
-
-
-
 	else
 	{
-		
 		if (options->precision > len)
 		{
-			
 			ret += fillnchar(len, options->precision, '0');
 		}
-			print_udec(nbr);
-			ret += len;
+		print_udec(nbr);
+		ret += len;
 	}
 	*res += ret;
 	return (ret);
 }
 
-
-
-size_t	ft_wstrlen(wchar_t *wstr)
+size_t		ft_wstrlen(wchar_t *wstr)
 {
 	size_t len = 0;
 
@@ -778,29 +741,19 @@ else
 		ft_print_null_string();
 	while (wstr[i] != L'\0')
 	{
-	
-	
-	ret += ft_putwchar(wstr[i]);
-	
+		ret += ft_putwchar(wstr[i]);
 		i++;
-
-		}
+	}
 		*res += ret;
-	
 	return (ret);
-	
 }
 
 /*
 **----------------------------------------------------------------------------------------------------------
 */
 
-
-
-
 int		ft_parse_flags(char *fp, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	int i;
 
 	i = 0;
@@ -819,8 +772,8 @@ int		ft_parse_flags(char *fp, t_options *options)
 				options->fill_by_zero = 1;
 			else if (fp[i] == '-')
 			{
-					options->left_align = 1;
-					options->fill_by_zero = 0;
+				options->left_align = 1;
+				options->fill_by_zero = 0;
 			}
 		}
 		else
@@ -834,7 +787,6 @@ int		ft_parse_flags(char *fp, t_options *options)
 
 int		ft_parse_width(char *fp, va_list *args, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	int i;
 	int arg;
 
@@ -844,11 +796,11 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 		while (ft_isdigit(fp[i]) || fp[i] == '*')
 		{
 			if (ft_isdigit(fp[i]))
-				{
-					options->width = ft_atoi(fp + i);
-					while (ft_isdigit(fp[i]))
-						i++;
-				}
+			{
+				options->width = ft_atoi(fp + i);
+				while (ft_isdigit(fp[i]))
+					i++;
+			}
 			if (fp[i] == '*')
 			{
 				arg = va_arg(*args, int);
@@ -867,37 +819,35 @@ int		ft_parse_width(char *fp, va_list *args, t_options *options)
 
 int		ft_parse_precision(char *fp, va_list *args, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	int i;
 	int arg;
 
 	i = 0;
 	if (fp[i] && fp[i] == '.')
+	{
+		i++;
+		options->is_set_precision = 1;
+		if (ft_isdigit(fp[i]))
 		{
-			i++;
-			options->is_set_precision = 1;
-			if (ft_isdigit(fp[i]))
-			{
-				options->precision = ft_atoi(fp + i);
-				while (ft_isdigit(fp[i]))
-					i++;
-			}
-			if (fp[i] == '*')
-			{
-				arg = va_arg(*args, int);
-				if (arg >= 0)
-					options->precision = arg;
-				else
-					options->is_set_precision = 0;
+			options->precision = ft_atoi(fp + i);
+			while (ft_isdigit(fp[i]))
 				i++;
-			}
 		}
+		if (fp[i] == '*')
+		{
+			arg = va_arg(*args, int);
+			if (arg >= 0)
+				options->precision = arg;
+			else
+				options->is_set_precision = 0;
+			i++;
+		}
+	}
 	return (i);
 }
 
 int		ft_parse_length(char *fp, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	int i;
 
 	i = 0;
@@ -942,7 +892,6 @@ int		ft_parse_length(char *fp, t_options *options)
 
 t_pf	ft_choose_type(e_conv conv, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	t_pf convert_functions[CONVERSIONS];
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
@@ -971,10 +920,8 @@ t_pf	ft_choose_type(e_conv conv, t_options *options)
 	return (convert_functions[conv]);
 }
 
-
 static int check_type(char c, t_options *options)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
 		return (1);
 	else if ( c == 'd' || c == 'i')
@@ -993,7 +940,6 @@ static int check_type(char c, t_options *options)
 
 ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	t_options *options;
 	char *fmtp;
 	t_pf ft_transformer;
@@ -1008,7 +954,6 @@ ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 		fmtp += ft_parse_width(fmtp, args, options);
 		fmtp += ft_parse_precision(fmtp, args, options);
 		fmtp += ft_parse_length(fmtp, options);
-
 		if (*fmtp != '\0')
 		{
 			if (check_type(*fmtp, options))
@@ -1019,21 +964,19 @@ ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 			else
 				ft_printf_putchar(&fmtp, NULL, options, res);
 		}
-			if (options)
-				free(options);
-			return (fmtp - *format);
+		if (options)
+			free(options);
+		return (fmtp - *format);
 	}
-return 0;
+	return 0;
 }
 
 
 int		ft_printf(const char *format, ...)
 {
-	//printf("-------------------%s\n", __FUNCTION__);
 	va_list		args;
 	int			res = 0;
 	char		*ptr;
-
 
 	va_start(args, format);
 	while (*format)
@@ -1055,4 +998,3 @@ int		ft_printf(const char *format, ...)
 	va_end(args);
 	return (res);
 }
-
