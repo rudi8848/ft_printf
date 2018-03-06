@@ -378,13 +378,15 @@ void	print_udec(uintmax_t n)
 int		fillnchar(int len, int width, char c)
 {
 	int i = 0;
+	char str[256];	//a little faster than output in loop
+
 	while (len < width)
 	{
-		ft_putchar(c);
+		str[i] = c;
 		len++;
 		i++;
 	}
-	return (i);
+	return (write(1, str, i));
 }
 
 ssize_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res)
@@ -460,7 +462,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	{
 		if (*ptr == 'p')
 		{
-			ft_putstr("0x");
+			write(1, "0x", 2);
 			ret += 2;
 		}
 		ret += fillnchar(ret, options->width, ' ');
@@ -474,7 +476,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 		{
 			if (options->show_prefix)
 			{
-				*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+				*ptr == 'X' ? write(1, "0X", 2) : write(1, "0x", 2);
 				ret += 2;
 				ret += fillnchar(len + ret, options->width, '0');
 				options->show_prefix = 0;
@@ -486,7 +488,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 			ret += fillnchar(len + options->show_prefix * 2, options->width, ' ');
 		if (options->show_prefix)
 		{
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			*ptr == 'X' ? write(1, "0X", 2) : write(1, "0x", 2);
 			ret += 2;
 		}
 		if (options->precision > len)
@@ -498,7 +500,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	{
 		if (options->show_prefix)
 		{
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			*ptr == 'X' ? write(1, "0X", 2) : write(1, "0x", 2);
 			ret += 2;
 		}
 		if (options->precision > len)
@@ -511,7 +513,7 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 	{
 		if (options->show_prefix)
 		{
-			*ptr == 'X' ? ft_putstr("0X") : ft_putstr("0x");
+			*ptr == 'X' ? write(1, "0X", 2) : write(1, "0x", 2);
 			ret += 2;
 		}
 		if (options->precision > len)
