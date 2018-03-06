@@ -60,7 +60,7 @@ ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *re
 			free(tmp);
 	}
 	else
-		options->width ? (*res += fillnchar(0, options->width, '0')) : (*res += ft_print_null_string());
+		(options->width && options->is_set_precision) ? (*res += fillnchar(0, options->width, '0')) : (*res += ft_print_null_string());
 	return (len);
 }
 
