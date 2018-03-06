@@ -894,20 +894,18 @@ int		ft_parse_length(char *fp, t_options *options)
 	return (i);
 }
 
-t_pf	ft_choose_type(e_conv conv, t_options *options)
+void	ft_set_array(t_pf *convert_functions)
 {
-	static t_pf convert_functions[CONVERSIONS];
-
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
-	if (conv == CONV_d && options->len_z)
-		convert_functions[CONV_d] = &ft_printf_putnbr_udec;
-	else
+	//if (conv == CONV_d && options->len_z)
+	//	convert_functions[CONV_d] = &ft_printf_putnbr_udec;
+	//else
 		convert_functions[CONV_d] = &ft_printf_putnbr_sdec;
 	convert_functions[CONV_D] = &ft_printf_putnbr_sdec;
-	if (conv == CONV_d && options->len_z)
-		convert_functions[CONV_i] = &ft_printf_putnbr_udec;
-	else
+	//if (conv == CONV_d && options->len_z)
+		//convert_functions[CONV_i] = &ft_printf_putnbr_udec;
+	//else
 		convert_functions[CONV_i] = &ft_printf_putnbr_sdec;
 	convert_functions[CONV_u] = &ft_printf_putnbr_udec;
 	convert_functions[CONV_U] = &ft_printf_putnbr_udec;
@@ -921,6 +919,20 @@ t_pf	ft_choose_type(e_conv conv, t_options *options)
 	//convert_functions[CONV_F] = &ft_prinft_putnbr_float;
 	convert_functions[CONV_C] = &ft_printf_putchar;
 	convert_functions[CONV_S] = &print_wstr;
+}
+
+t_pf	ft_choose_type(e_conv conv/*, t_options *options*/)
+{
+	static t_pf *convert_functions;
+
+	if (!convert_functions)
+	{
+		convert_functions = (t_pf*)ft_memalloc(sizeof(t_pf) * CONVERSIONS);
+		if (!convert_functions)
+			exit(-1);
+		ft_set_array(convert_functions);
+	}
+	
 	return (convert_functions[conv]);
 }
 
@@ -962,7 +974,7 @@ ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 		{
 			if (check_type(*fmtp, options))
 			{
-				ft_transformer = ft_choose_type(*fmtp, options);
+				ft_transformer = ft_choose_type(*fmtp/*, options*/);
 				ft_transformer(&fmtp, args, options, res);
 			}
 			else
