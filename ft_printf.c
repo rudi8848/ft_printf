@@ -12,7 +12,7 @@ static int check_type(char c, t_options *options);
   
 int		ft_print_null_string(void)
 {
-	ft_putstr("(null)");
+	write(1, "(null)", 6);
 	return (6);
 }
 
@@ -60,7 +60,7 @@ ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *re
 			free(tmp);
 	}
 	else
-		*res += ft_print_null_string();
+		options->width ? (*res += fillnchar(0, options->width, '0')) : (*res += ft_print_null_string());
 	return (len);
 }
 
@@ -738,7 +738,11 @@ else
 		exit(ERROR);
 	wstr = (wchar_t *)va_arg(*args, wchar_t*);
 	if (!wstr)
+	{
 		ft_print_null_string();
+		*res += 6;
+		return (6);
+	}
 	while (wstr[i] != L'\0')
 	{
 		ret += ft_putwchar(wstr[i]);
@@ -892,7 +896,7 @@ int		ft_parse_length(char *fp, t_options *options)
 
 t_pf	ft_choose_type(e_conv conv, t_options *options)
 {
-	t_pf convert_functions[CONVERSIONS];
+	static t_pf convert_functions[CONVERSIONS];
 
 	convert_functions[CONV_c] = &ft_printf_putchar;
 	convert_functions[CONV_s] = &ft_printf_putstr;
