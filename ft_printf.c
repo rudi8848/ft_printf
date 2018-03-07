@@ -235,9 +235,9 @@ uintmax_t	ft_cut_unsigned(va_list *args, t_options *options)
 	uintmax_t nbr;
 
 	nbr = va_arg(*args, uintmax_t);
-	if (options->len_hh)
+	if (options->len_hh && !options->len_l)
 		nbr = (unsigned char)nbr;
-	else if (options->len_h)
+	else if (options->len_h && !options->len_l)
 		nbr = (unsigned short)nbr;
 	else if (options->len_l)
 		nbr = (unsigned long)nbr;
@@ -257,9 +257,9 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 	intmax_t nbr;
 
 	nbr = va_arg(*args, intmax_t);
-	if (options->len_hh)
+	if (options->len_hh && !options->len_l)
 		nbr = (char)nbr;
-	else if (options->len_h)
+	else if (options->len_h && !options->len_l)
 		nbr = (short)nbr;
 	else if (options->len_l)
 		nbr = (long)nbr;
