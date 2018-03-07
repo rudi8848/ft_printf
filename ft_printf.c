@@ -137,12 +137,13 @@ int		write_four_bytes(size_t symb)
 	return (res);
 }
 
-
+/*
 int		ft_putwchar(wchar_t chr)
-{
+
 	if (chr <= 0x7F)
         ft_putchar(chr);
-    /*
+
+    
     else if (chr <= 0x7FF)
     {
         ft_putchar((chr >> 6) + 0xC0);
@@ -161,17 +162,9 @@ int		ft_putwchar(wchar_t chr)
         ft_putchar(((chr >> 6) & 0x3F) + 0x80);
         ft_putchar((chr & 0x3F) + 0x80);
     }
+        	
     
-    else if (chr <= 0xFF)
-    {
-    	if (MB_CUR_MAX > 1)
-    	{
-    		write(1, &chr, 1);
-    		return 1;
-    	}
-    	else
-    		exit (-1);
-    }*/
+    
 	else if (chr <= 0x7FF)
 		return write_two_bytes(chr);
 	else if (chr <= 0xFFFF)
@@ -179,6 +172,64 @@ int		ft_putwchar(wchar_t chr)
 	else if (chr <= 0x10FFFF)
 		return write_four_bytes(chr);
 	return (1);
+}
+*/
+
+int ft_nb_bits(wchar_t wc)
+{
+  int i = 0;
+  while (wc)
+  {
+    wc/=2;
+    i++;
+    }
+    return i;
+  }
+int ft_nb_bytes(int n)
+{
+  if (n <= 7)
+    return 1;
+    else if (n <= 11)
+    return 2;
+    else if (n <= 16)
+    return 3;
+    else
+    return 4;
+  }
+
+int   ft_putwchar(wchar_t wc)
+{
+    char    tmp[4];
+    int bits;
+    int bytes;
+
+    bits = ft_nb_bits(wc);
+    bytes = ft_nb_bytes(wc);
+
+    if (bytes <= bits && bytes <= MB_CUR_MAX)
+    {
+        if (bytes == 1)
+            tmp[0] = wc;
+        else
+        {
+            if (bytes == 2)
+                tmp[0] = ((wc & (0x1f << 6)) >> 6) | 0xC0;
+            else
+            {
+                if (bytes == 3)
+                    tmp[0] = ((wc >> 12) & 0xf) | 0xE0;
+                else
+                {
+                    tmp[0] = ((wc >> 18) & 7) | 0xF0;
+                    tmp[1] = ((wc >> 12) & 0x3f) | 0x80;
+                }
+                tmp[bytes - 2] = ((wc >> 6) & 0x3f) | 0x80;
+            }
+            tmp[bytes - 1] = (wc & 0x3f) | 0x80;
+        }
+        write(1, tmp, bytes);
+    }
+    return (bytes);
 }
 
 ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
@@ -235,9 +286,14 @@ uintmax_t	ft_cut_unsigned(va_list *args, t_options *options)
 	uintmax_t nbr;
 
 	nbr = va_arg(*args, uintmax_t);
-	if (options->len_hh && !options->len_l)
+	if (options->len_l || options->len_ll)
+	{
+		options->len_h = 0;
+		options->len_hh = 0;
+	}
+	if (options->len_hh)
 		nbr = (unsigned char)nbr;
-	else if (options->len_h && !options->len_l)
+	else if (options->len_h)
 		nbr = (unsigned short)nbr;
 	else if (options->len_l)
 		nbr = (unsigned long)nbr;
@@ -257,6 +313,11 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 	intmax_t nbr;
 
 	nbr = va_arg(*args, intmax_t);
+	if (options->len_l || options->len_ll)
+	{
+		options->len_h = 0;
+		options->len_hh = 0;
+	}
 	if (options->len_hh && !options->len_l)
 		nbr = (char)nbr;
 	else if (options->len_h && !options->len_l)
@@ -569,6 +630,12 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 		}
 		else
 		{
+			/*if (options->space_before)
+				{
+					ft_putchar(' ');
+					options->space_before = 0;
+					ret++;
+				}*/
 			if (options->precision < len) 
 				ret += fillnchar(len, options->width, ' ');
 			else if (options->precision > len && nbr >= 0)
@@ -651,6 +718,7 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 	return (ret);
 }
 
+
 ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
 {
 	uintmax_t	nbr;
@@ -660,7 +728,7 @@ ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int
 	if (!fmt)
 		exit(ERROR);
 	nbr = ft_cut_unsigned(args, options);
-	len = ft_unbr_length(&nbr, 10/*, options*/);
+	len = ft_unbr_length(&nbr, 10);
 
 	if (!nbr && options->is_set_precision &&!options->precision)
 	{
@@ -713,6 +781,71 @@ ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int
 	*res += ret;
 	return (ret);
 }
+
+
+
+/*
+**----------------------------------------------------------------------------------------------------------
+*/
+
+
+/*
+int ft_max(int a, int b, int c)
+{
+	if (a >= b && a >=c)
+		return a;
+	else if (b >= a && b >= c)
+		return b;
+	else
+		return c;
+}
+char	*print_udec1(char *ptr, uintmax_t n, int len)
+{	
+	while (len)
+	{
+		*(ptr + len) = n % 10 + '0';
+		n /= 10;
+		len--;
+	}
+	return (ptr);
+
+}
+ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
+{
+	uintmax_t	nbr;
+	int		len;
+	int ret = 0;
+	char *str;
+	int slen;
+	char * ptr;
+
+	if (!fmt)
+		exit(ERROR);
+	nbr = ft_cut_unsigned(args, options);
+	len = ft_unbr_length(&nbr, 10);
+
+	//slen = ft_max(len, options->precision, options->width)
+	slen = len + options->space_before + options->show_sign;
+	str = ft_strnew(slen);
+	if (str)
+	{
+		
+		*str = options->show_sign ? '+' : ' ';
+		ptr = str + 1;
+		ptr = print_udec1(ptr, nbr, len);
+		
+		ft_printf_putstr(fmt, NULL, options, res);
+		
+		free(str);
+	}
+	*res += slen;
+	return slen;
+}
+*/
+
+/*
+**----------------------------------------------------------------------------------------------------------
+*/
 
 size_t		ft_wstrlen(wchar_t *wstr)
 {
