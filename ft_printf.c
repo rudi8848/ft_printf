@@ -547,6 +547,8 @@ ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int 
 		}
 		else if (!(options->precision > len))
 			ret += fillnchar(len + options->show_prefix * 2, options->width, ' ');
+		else if (options->precision > len)
+			ret += fillnchar(options->precision + options->show_prefix * 2, options->width, ' ');
 		if (options->show_prefix)
 		{
 			*ptr == 'X' ? write(1, "0X", 2) : write(1, "0x", 2);
@@ -897,13 +899,16 @@ int		ft_parse_flags(char *fp, t_options *options)
 
 	i = 0;
 	
-	while (fp[i] == '-' || fp[i] == '+' || fp[i] == ' ' || fp[i] == '#' || fp[i] == '0' )
+	while (fp[i] && (fp[i] == '-' || fp[i] == '+' || fp[i] == ' ' || fp[i] == '#' || fp[i] == '0' ))
 	{
 		if (fp[i] && fp[i + 1])
 		{
 			if(fp[i] == '+')
+			{
 				options->show_sign = 1;
-			else if (fp[i] == ' ')
+				options->space_before = 0;
+			}
+			else if (fp[i] == ' ' && !options->show_sign)
 				options->space_before = 1;
 			else if (fp[i] == '#')
 				options->show_prefix = 1;
@@ -1056,7 +1061,7 @@ void	ft_set_array(t_pf *convert_functions)
 	convert_functions[CONV_S] = &print_wstr;
 }
 
-t_pf	ft_choose_type(e_conv conv/*, t_options *options*/)
+t_pf	ft_choose_type(e_conv conv)
 {
 	static t_pf *convert_functions;
 
@@ -1073,9 +1078,9 @@ t_pf	ft_choose_type(e_conv conv/*, t_options *options*/)
 
 static int check_type(char c, t_options *options)
 {
-	if (c == 's' || c == 'S' || c == 'c' || c == 'C')
+	if (c == 's' || c == 'd' || c == 'c' || c == 'i')
 		return (1);
-	else if ( c == 'd' || c == 'i')
+	else if ( c == 'S' || c == 'C')
 		return (1);
 	else if (c == 'o'|| c == 'u' || c == 'x' || c == 'X')
 		return (1);
@@ -1109,7 +1114,7 @@ ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 		{
 			if (check_type(*fmtp, options))
 			{
-				ft_transformer = ft_choose_type(*fmtp/*, options*/);
+				ft_transformer = ft_choose_type(*fmtp);
 				ft_transformer(&fmtp, args, options, res);
 			}
 			else
