@@ -632,18 +632,18 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int
 		}
 		else
 		{
-			/*if (options->space_before)
-				{
-					ft_putchar(' ');
-					options->space_before = 0;
-					ret++;
-				}*/
 			if (options->precision < len) 
 				ret += fillnchar(len, options->width, ' ');
 			else if (options->precision > len && nbr >= 0)
-				ret += fillnchar(options->precision + options->show_sign, options->width, ' ');
+			{
+				if (options->space_before)
+					ret += write(1, " ", 1);
+				ret += fillnchar(options->precision + options->show_sign + options->space_before, options->width, ' ');
+			}
 			else if (options->precision > len && nbr < 0)
 				ret += fillnchar(options->precision + 1, options->width, ' ');
+			else if (options->width > options->precision && options->width > len && nbr >=0)
+				ret += fillnchar(options->precision, options->width, ' ');
 			if (options->show_sign && !options->fill_by_zero && nbr >= 0)
 			{
 				ft_putchar('+');
