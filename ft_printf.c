@@ -64,7 +64,7 @@ ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *re
 	return (len);
 }
 
-
+/*
 int		write_two_bytes(size_t symb)
 {
 	int 			res;
@@ -137,7 +137,7 @@ int		write_four_bytes(size_t symb)
 	return (res);
 }
 
-/*
+*//*
 int		ft_putwchar(wchar_t chr)
 
 	if (chr <= 0x7F)
@@ -173,11 +173,12 @@ int		ft_putwchar(wchar_t chr)
 		return write_four_bytes(chr);
 	return (1);
 }
+
 */
 
-int ft_nb_bits(wchar_t wc)
+unsigned int ft_nb_bits(wchar_t wc)
 {
-  int i = 0;
+  unsigned int i = 0;
   while (wc)
   {
     wc/=2;
@@ -185,7 +186,7 @@ int ft_nb_bits(wchar_t wc)
     }
     return i;
   }
-int ft_nb_bytes(int n)
+unsigned int ft_nb_bytes(int n)
 {
   if (n <= 7)
     return 1;
@@ -196,15 +197,14 @@ int ft_nb_bytes(int n)
     else
     return 4;
   }
-
-int   ft_putwchar(wchar_t wc)
+unsigned int   ft_putwchar(wint_t wc)
 {
     char    tmp[4];
-    int bits;
-    int bytes;
+    unsigned int bits;
+    unsigned int bytes;
 
     bits = ft_nb_bits(wc);
-    bytes = ft_nb_bytes(wc);
+    bytes = ft_nb_bytes(bits);
 
     if (bytes <= bits && bytes <= MB_CUR_MAX)
     {
@@ -238,18 +238,18 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 	char *ptr;
 	int ret = 0;
 
-	if (options->width && !options->left_align)
-	{
-		if (options->fill_by_zero)
-			ret += fillnchar(1, options->width, '0');
-		else
-			ret += fillnchar(1, options->width, ' ');
-	}
 	ptr = *fmt;
 	if (args)
 	{
 		symb = va_arg(*args, int);
-		if (*ptr == 'c' && !options->len_l)
+		if (options->width && !options->left_align)
+	{
+		if (options->fill_by_zero)
+			ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, '0');
+		else
+			ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, ' ');
+	}
+	if (*ptr == 'c' && !options->len_l)
 		{
 			ft_putchar(symb);
 			ret += 1;
