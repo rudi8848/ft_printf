@@ -176,7 +176,7 @@ int		ft_putwchar(wchar_t chr)
 
 */
 
-int		ft_nb_bits(wchar_t wc)
+int		ft_nb_bits(wint_t wc)
 {
  int i = 0;
   while (wc)
@@ -189,14 +189,14 @@ int		ft_nb_bits(wchar_t wc)
 
 int ft_nb_bytes(int n)
 {
-  if (n <= 7)
-    return 1;
-    else if (n <= 11)
-    return 2;
-    else if (n <= 16)
-    return 3;
-    else
-    return 4;
+	if (n <= 7)
+		return (1);
+	else if (n <= 11)
+		return (2);
+	else if (n <= 16)
+		return (3);
+	else
+		return (4);
 }
 
 int   ft_putwchar(wint_t wc)
@@ -229,7 +229,7 @@ int   ft_putwchar(wint_t wc)
             }
             tmp[bytes - 1] = (wc & 0x3f) | 0x80;
         }
-        write(1, tmp, bytes);
+        write(1, tmp, bytes); 
     }
     return (bytes);
 }
@@ -276,8 +276,6 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 	*res += ret;
 	return (ret);
 }
-//int		print_wstr(int *wstr);
-
 
 /*
 **----------------------------------------------------------------------------------------------------------
@@ -869,15 +867,10 @@ size_t		ft_wstrlen(wchar_t *wstr)
 
 ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
 {
-	/*
-	if (fmt && args && options && res)
-	return 1;
-else
-	return 0;
-	*/
-	size_t i;
+	int i;
 	wchar_t *wstr = NULL;
 	int ret = 0;
+	int len;
 
 	i = 0;
 	if (!fmt || !options)
@@ -889,12 +882,32 @@ else
 		*res += 6;
 		return (6);
 	}
-	while (wstr[i] != L'\0')
+	len = ft_wstrlen(wstr);
+	if (options->is_set_precision /*&& options->precision*/)
 	{
-		ret += ft_putwchar(wstr[i]);
-		i++;
+		if (options->fill_by_zero)
+		{
+			if (options->precision)
+				ret += fillnchar(0, options->precision, '0');
+			else
+				ret += fillnchar(0, options->width, '0');
+		}
+		while (ret < options->precision)
+		{
+			ret += ft_putwchar(wstr[i]);
+			i++;
+		}
+		return (ret);
 	}
-		*res += ret;
+	else
+	{
+		while (wstr[i] != L'\0')
+		{
+			ret += ft_putwchar(wstr[i]);
+			i++;
+		}
+	}
+	*res += ret;
 	return (ret);
 }
 
