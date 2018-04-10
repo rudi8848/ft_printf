@@ -176,17 +176,18 @@ int		ft_putwchar(wchar_t chr)
 
 */
 
-unsigned int ft_nb_bits(wchar_t wc)
+int		ft_nb_bits(wchar_t wc)
 {
-  unsigned int i = 0;
+ int i = 0;
   while (wc)
   {
     wc/=2;
     i++;
     }
     return i;
-  }
-unsigned int ft_nb_bytes(int n)
+}
+
+int ft_nb_bytes(int n)
 {
   if (n <= 7)
     return 1;
@@ -196,12 +197,13 @@ unsigned int ft_nb_bytes(int n)
     return 3;
     else
     return 4;
-  }
-unsigned int   ft_putwchar(wint_t wc)
+}
+
+int   ft_putwchar(wint_t wc)
 {
     char    tmp[4];
-    unsigned int bits;
-    unsigned int bytes;
+    int bits;
+    int bytes;
 
     bits = ft_nb_bits(wc);
     bytes = ft_nb_bytes(bits);
@@ -243,22 +245,29 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 	{
 		symb = va_arg(*args, int);
 		if (options->width && !options->left_align)
-	{
-		if (options->fill_by_zero)
-			ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, '0');
-		else
-			ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, ' ');
-	}
-	if (*ptr == 'c' && !options->len_l)
+		{
+			if (options->fill_by_zero)
+				ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, '0');
+			else
+				ret += fillnchar(ft_nb_bytes(ft_nb_bits(symb)), options->width, ' ');
+		}
+		if (*ptr == 'c' && !options->len_l)
 		{
 			ft_putchar(symb);
 			ret += 1;
 		}
 		else
-				ret += ft_putwchar(symb);
+			ret += ft_putwchar(symb);
 	}
 	else
 	{
+		if (options->width && !options->left_align)
+		{
+			if (options->fill_by_zero)
+				ret += fillnchar(1, options->width, '0');
+			else
+				ret += fillnchar(1, options->width, ' ');
+		}
 		ft_putchar(*ptr);
 		ret += 1;
 	}
@@ -1036,17 +1045,13 @@ int		ft_parse_length(char *fp, t_options *options)
 
 void	ft_set_array(t_pf *convert_functions)
 {
+
 	convert_functions[CONV_c] = &ft_printf_putchar;
+	
 	convert_functions[CONV_s] = &ft_printf_putstr;
-	//if (conv == CONV_d && options->len_z)
-	//	convert_functions[CONV_d] = &ft_printf_putnbr_udec;
-	//else
-		convert_functions[CONV_d] = &ft_printf_putnbr_sdec;
+	convert_functions[CONV_d] = &ft_printf_putnbr_sdec;
 	convert_functions[CONV_D] = &ft_printf_putnbr_sdec;
-	//if (conv == CONV_d && options->len_z)
-		//convert_functions[CONV_i] = &ft_printf_putnbr_udec;
-	//else
-		convert_functions[CONV_i] = &ft_printf_putnbr_sdec;
+	convert_functions[CONV_i] = &ft_printf_putnbr_sdec;
 	convert_functions[CONV_u] = &ft_printf_putnbr_udec;
 	convert_functions[CONV_U] = &ft_printf_putnbr_udec;
 	convert_functions[CONV_o] = &ft_printf_putnbr_oct;
@@ -1061,7 +1066,7 @@ void	ft_set_array(t_pf *convert_functions)
 	convert_functions[CONV_S] = &print_wstr;
 }
 
-t_pf	ft_choose_type(e_conv conv)
+t_pf	ft_choose_type(e_conv conv, t_options *options)
 {
 	static t_pf *convert_functions;
 
@@ -1072,7 +1077,10 @@ t_pf	ft_choose_type(e_conv conv)
 			exit(-1);
 		ft_set_array(convert_functions);
 	}
-	
+	if (conv == CONV_s && options->len_l)
+		return convert_functions[CONV_S];
+	if (conv == CONV_c && options->len_l)
+		return convert_functions[CONV_C];
 	return (convert_functions[conv]);
 }
 
@@ -1081,7 +1089,10 @@ static int check_type(char c, t_options *options)
 	if (c == 's' || c == 'd' || c == 'c' || c == 'i')
 		return (1);
 	else if ( c == 'S' || c == 'C')
+		{
+		options->len_l = 1;
 		return (1);
+	}
 	else if (c == 'o'|| c == 'u' || c == 'x' || c == 'X')
 		return (1);
 	else if (c == 'D' || c == 'U'  || c == 'O' || c == 'p')
@@ -1114,7 +1125,7 @@ ssize_t	ft_parse_options(const char **format, va_list *args, int *res)
 		{
 			if (check_type(*fmtp, options))
 			{
-				ft_transformer = ft_choose_type(*fmtp);
+				ft_transformer = ft_choose_type(*fmtp, options);
 				ft_transformer(&fmtp, args, options, res);
 			}
 			else
