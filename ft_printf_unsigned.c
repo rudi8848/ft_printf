@@ -1,6 +1,6 @@
 #include "includes/ft_printf.h"
 
-ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_propt *options, int *res)
 {
 	uintmax_t	nbr;
 	int		len;

@@ -34,10 +34,10 @@ typedef		struct s_options
 	int 			len_ll;
 	int 			len_j;
 	int 			len_z;
-}					t_options;
+}					t_propt;
 
 
-typedef		ssize_t(*t_pf)(char **, va_list*, t_options*, int *res);
+typedef		ssize_t(*t_pf)(char **, va_list*, t_propt*, int *res);
 
 
 typedef				enum
@@ -76,38 +76,38 @@ typedef		enum
 
 
 int		ft_printf(const char *format, ...);
-int		ft_parse_flags(char *fp, t_options *options);
-int		ft_parse_width(char *fp, va_list *args, t_options *options);
-int		ft_parse_precision(char *fp, va_list *args, t_options *options);
-int		ft_parse_length(char *fp, t_options *options);
+int		ft_parse_flags(char *fp, t_propt *options);
+int		ft_parse_width(char *fp, va_list *args, t_propt *options);
+int		ft_parse_precision(char *fp, va_list *args, t_propt *options);
+int		ft_parse_length(char *fp, t_propt *options);
 int		ft_print_null_string(void);
-ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res);
-ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res);
+ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_propt *options, int *res);
+ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_propt *options, int *res);
 size_t		ft_wstrlen(wchar_t *wstr);
-ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res);
+ssize_t	print_wstr(char **fmt, va_list *args, t_propt *options, int *res);
 int		ft_nb_bits(wint_t wc);
 int ft_nb_bytes(int n);
 int   ft_putwchar(wint_t wc);
-uintmax_t	ft_cut_unsigned(va_list *args, t_options *options);
-intmax_t	ft_cut_signed(va_list *args, t_options *options);
+uintmax_t	ft_cut_unsigned(va_list *args, t_propt *options);
+intmax_t	ft_cut_signed(va_list *args, t_propt *options);
 int		ft_unbr_length(uintmax_t *n,int  base);
 int		ft_snbr_length(intmax_t *n,int  base);
 void	print_oct(uintmax_t n);
 void	print_sdec(intmax_t n);
 void	print_udec(uintmax_t n);
 int		fillnchar(int len, int width, char c);
-ssize_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_options *options, int *res);
-ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_options *options, int *res);
-ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_options *options, int *res);
-ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_options *options, int *res);
+ssize_t	ft_printf_putnbr_oct(char **fmt, va_list *args, t_propt *options, int *res);
+ssize_t	ft_printf_putnbr_hex(char **fmt, va_list *args, t_propt *options, int *res);
+ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_propt *options, int *res);
+ssize_t	ft_printf_putnbr_udec(char **fmt, va_list *args, t_propt *options, int *res);
 void	ft_set_array(t_pf *convert_functions);
-t_pf	ft_choose_type(e_conv conv, t_options *options);
+t_pf	ft_choose_type(e_conv conv, t_propt *options);
 ssize_t	ft_parse_options(const char **format, va_list *args, int *res);
 void	print_hex(uintmax_t n, char a);
 void	print_oct(uintmax_t n);
 void	print_sdec(intmax_t n);
 void	print_udec(uintmax_t n);
-
+int		ft_zero_precision(char *ptr, t_propt *opt, int *res);
 
 
 #endif

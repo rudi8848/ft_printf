@@ -27,7 +27,7 @@ int				fillnchar(int len, int width, char c)
 	return (write(1, str, i));
 }
 
-t_pf			ft_choose_type(e_conv conv, t_options *options)
+t_pf			ft_choose_type(e_conv conv, t_propt *options)
 {
 	static t_pf *convert_functions;
 
@@ -45,7 +45,7 @@ t_pf			ft_choose_type(e_conv conv, t_options *options)
 	return (convert_functions[conv]);
 }
 
-static int		check_type(char c, t_options *options)
+static int		check_type(char c, t_propt *options)
 {
 	if (c == 's' || c == 'd' || c == 'c' || c == 'i')
 		return (1);
@@ -67,12 +67,12 @@ static int		check_type(char c, t_options *options)
 
 ssize_t			ft_parse_options(const char **format, va_list *args, int *res)
 {
-	t_options	*options;
+	t_propt	*options;
 	char		*fmtp;
 	t_pf		ft_transformer;
 
 	fmtp = (char*)++(*format);
-	options = (t_options*)ft_memalloc(sizeof(t_options));
+	options = (t_propt*)ft_memalloc(sizeof(t_propt));
 	if (!options)
 		exit(EXIT_FAILURE);
 	if (*fmtp)

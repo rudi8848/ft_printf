@@ -12,7 +12,7 @@
 
 #include "includes/ft_printf.h"
 
-static void		ft_correct_opt(t_options *options)
+static void		ft_correct_opt(t_propt *options)
 {
 	if (options->left_align)
 		options->fill_by_zero = 0;
@@ -20,7 +20,7 @@ static void		ft_correct_opt(t_options *options)
 		options->space_before = 0;
 }
 
-int				ft_parse_flags(char *fp, t_options *options)
+int				ft_parse_flags(char *fp, t_propt *options)
 {
 	int i;
 
@@ -47,7 +47,7 @@ int				ft_parse_flags(char *fp, t_options *options)
 	return (i);
 }
 
-int				ft_parse_width(char *fp, va_list *args, t_options *options)
+int				ft_parse_width(char *fp, va_list *args, t_propt *options)
 {
 	int i;
 	int arg;
@@ -76,7 +76,7 @@ int				ft_parse_width(char *fp, va_list *args, t_options *options)
 	return (i);
 }
 
-int				ft_parse_precision(char *fp, va_list *args, t_options *options)
+int				ft_parse_precision(char *fp, va_list *args, t_propt *options)
 {
 	int i;
 	int arg;
@@ -105,7 +105,7 @@ int				ft_parse_precision(char *fp, va_list *args, t_options *options)
 	return (i);
 }
 
-int				ft_parse_length(char *fp, t_options *options)
+int				ft_parse_length(char *fp, t_propt *options)
 {
 	int i;
 

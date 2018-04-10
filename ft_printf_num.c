@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf_num.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 17:26:37 by gvynogra          #+#    #+#             */
+/*   Updated: 2018/04/10 17:30:36 by gvynogra         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes/ft_printf.h"
 
-uintmax_t	ft_cut_unsigned(va_list *args, t_options *options)
+uintmax_t		ft_cut_unsigned(va_list *args, t_propt *options)
 {
 	uintmax_t nbr;
 
@@ -24,10 +36,10 @@ uintmax_t	ft_cut_unsigned(va_list *args, t_options *options)
 		nbr = (size_t)nbr;
 	else
 		nbr = (unsigned)nbr;
-	return(nbr);
+	return (nbr);
 }
 
-intmax_t	ft_cut_signed(va_list *args, t_options *options)
+intmax_t		ft_cut_signed(va_list *args, t_propt *options)
 {
 	intmax_t nbr;
 
@@ -54,10 +66,10 @@ intmax_t	ft_cut_signed(va_list *args, t_options *options)
 	return (nbr);
 }
 
-int		ft_unbr_length(uintmax_t *n,int  base)
+int				ft_unbr_length(uintmax_t *n, int base)
 {
-	int len;
-	uintmax_t nbr;
+	int			len;
+	uintmax_t	nbr;
 
 	len = 0;
 	nbr = 0;
@@ -74,10 +86,11 @@ int		ft_unbr_length(uintmax_t *n,int  base)
 	}
 	return (len);
 }
-int		ft_snbr_length(intmax_t *n,int  base)
+
+int				ft_snbr_length(intmax_t *n, int base)
 {
-	int len;
-	intmax_t nbr;
+	int			len;
+	intmax_t	nbr;
 
 	len = 0;
 	nbr = 0;
@@ -87,7 +100,7 @@ int		ft_snbr_length(intmax_t *n,int  base)
 	{
 		if (base == 10)
 			len++;
-		nbr = - *n;
+		nbr = -*n;
 	}
 	else
 		nbr = *n;
@@ -97,4 +110,19 @@ int		ft_snbr_length(intmax_t *n,int  base)
 		len++;
 	}
 	return (len);
+}
+
+int				ft_zero_precision(char *ptr, t_propt *opt, int *res)
+{
+	int ret;
+
+	ret = 0;
+	if (*ptr == 'p')
+	{
+		write(1, "0x", 2);
+		ret += 2;
+	}
+	ret += fillnchar(ret, opt->width, ' ');
+	*res += ret;
+	return (ret);
 }

@@ -6,7 +6,7 @@ int		ft_print_null_string(void)
 	return (6);
 }
 
-ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_propt *options, int *res)
 {
 	int symb;
 	char *ptr;
@@ -49,7 +49,7 @@ ssize_t		ft_printf_putchar(char **fmt, va_list *args, t_options *options, int *r
 	return (ret);
 }
 
-ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t		ft_printf_putstr(char **fmt, va_list *args, t_propt *options, int *res)
 {
 	int len;
 	int ret = 0;
@@ -106,7 +106,7 @@ size_t		ft_wstrlen(wchar_t *wstr)
 	return (len);
 }
 
-ssize_t	print_wstr(char **fmt, va_list *args, t_options *options, int *res)
+ssize_t	print_wstr(char **fmt, va_list *args, t_propt *options, int *res)
 {
 	int i;
 	wchar_t *wstr = NULL;

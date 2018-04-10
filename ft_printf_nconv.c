@@ -1,10 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf_nconv.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/10 17:23:44 by gvynogra          #+#    #+#             */
+/*   Updated: 2018/04/10 17:25:40 by gvynogra         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes/ft_printf.h"
 
 void	ft_set_array(t_pf *convert_functions)
 {
-
 	convert_functions[CONV_c] = &ft_printf_putchar;
-	
 	convert_functions[CONV_s] = &ft_printf_putstr;
 	convert_functions[CONV_d] = &ft_printf_putnbr_sdec;
 	convert_functions[CONV_D] = &ft_printf_putnbr_sdec;
@@ -16,9 +26,6 @@ void	ft_set_array(t_pf *convert_functions)
 	convert_functions[CONV_x] = &ft_printf_putnbr_hex;
 	convert_functions[CONV_X] = &ft_printf_putnbr_hex;
 	convert_functions[CONV_p] = &ft_printf_putnbr_hex;
-	//convert_functions[CONV_b] = &ft_printf_putnbr_bin;
-	//convert_functions[CONV_f] = &ft_prinft_putnbr_float;
-	//convert_functions[CONV_F] = &ft_prinft_putnbr_float;
 	convert_functions[CONV_C] = &ft_printf_putchar;
 	convert_functions[CONV_S] = &print_wstr;
 }
@@ -47,7 +54,6 @@ void	print_hex(uintmax_t n, char a)
 		ft_putchar(n + '0');
 }
 
-
 void	print_sdec(intmax_t n)
 {
 	uintmax_t	nbr;
@@ -58,7 +64,7 @@ void	print_sdec(intmax_t n)
 		nbr = -n;
 	}
 	else
-		nbr = n;	
+		nbr = n;
 	if (nbr >= 10)
 	{
 		print_sdec(nbr / 10);
@@ -69,7 +75,7 @@ void	print_sdec(intmax_t n)
 }
 
 void	print_udec(uintmax_t n)
-{	
+{
 	if (n >= 10)
 	{
 		print_udec(n / 10);
