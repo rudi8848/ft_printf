@@ -19,11 +19,9 @@ void	ft_putendl_fd(char const *s, int fd)
 	i = 0;
 	if (s && fd)
 	{
-		while (s[i])
-		{
-			write(fd, &s[i], 1);
+		while (s[i])		
 			i++;
-		}
+		write(fd, s, i);
 		write(fd, "\n", 1);
 	}
 }

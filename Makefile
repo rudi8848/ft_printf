@@ -21,7 +21,9 @@ SRCS = ft_atoi.c ft_bzero.c ft_isalnum.c ft_isalpha.c ft_isascii.c ft_isdigit.c 
 	   ft_strmap.c ft_strmapi.c ft_strncat.c ft_strncmp.c ft_strncpy.c ft_strnequ.c \
 	   ft_strnew.c ft_strnstr.c ft_strrchr.c ft_strsplit.c ft_strstr.c ft_strsub.c \
 	   ft_strtrim.c ft_tolower.c ft_toupper.c ft_foreach.c ft_swap.c ft_iswhitespace.c \
-	   ft_ispunct.c ft_rot_13.c ft_printf.c
+	   ft_ispunct.c ft_rot_13.c ft_printf.c ft_printf_str.c ft_printf_parsing.c \
+	   ft_printf_wchar.c ft_printf_num.c ft_printf_nconv.c ft_printf_oct.c ft_printf_hex.c \
+	   ft_printf_unsigned.c ft_printf_signed.c
 OBJS = $(SRCS:.c=.o)
 
 

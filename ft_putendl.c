@@ -20,10 +20,8 @@ void	ft_putendl(char const *s)
 	if (s)
 	{
 		while (s[i])
-		{
-			write(1, &s[i], 1);
 			i++;
-		}
+		write(1, s, i);
 		write(1, "\n", 1);
 	}
 }
