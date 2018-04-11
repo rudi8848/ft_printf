@@ -6,7 +6,7 @@
 /*   By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 14:44:29 by gvynogra          #+#    #+#             */
-/*   Updated: 2018/04/10 15:05:48 by gvynogra         ###   ########.fr       */
+/*   Updated: 2018/04/11 09:10:35 by gvynogra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int		check_type(char c, t_propt *options)
 
 ssize_t			ft_parse_options(const char **format, va_list *args, int *res)
 {
-	t_propt	*options;
+	t_propt		*options;
 	char		*fmtp;
 	t_pf		ft_transformer;
 

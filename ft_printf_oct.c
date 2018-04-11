@@ -12,16 +12,6 @@
 
 #include "includes/ft_printf.h"
 
-int		ft_oct_no_precision(t_propt *opt, int *res)
-{
-	int ret;
-
-	ret = 0;
-	ret = fillnchar(0, opt->width, ' ');
-	*res += ret;
-	return (ret);
-}
-
 int		ft_o_width_right(uintmax_t nbr, t_propt *opt, int len)
 {
 	int ret;
@@ -78,7 +68,7 @@ ssize_t	ft_printf_putnbr_oct(char **ft, va_list *arg, t_propt *opt, int *res)
 	nbr = ft_cut_unsigned(arg, opt);
 	if (!nbr && opt->is_set_precision && !opt->precision &&
 			!opt->show_prefix)
-		return (ft_oct_no_precision(opt, res));
+		return (ft_zero_precision(*ft, opt, res));
 	len = ft_unbr_length(&nbr, 8);
 	if (nbr != 0 && opt->show_prefix)
 	{
