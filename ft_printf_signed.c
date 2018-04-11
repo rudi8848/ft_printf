@@ -12,6 +12,50 @@
 
 #include "includes/ft_printf.h"
 
+int		ft_s_right_precision(t_propt *opt, int len, intmax_t nbr)
+{
+	int ret;
+
+	ret = 0;
+	if (opt->precision < len)
+		ret += fillnchar(len, opt->width, ' ');
+	else if (opt->precision > len && nbr >= 0)
+	{
+		if (opt->space_before)
+			ret += write(1, " ", 1);
+		ret += fillnchar(opt->precision + opt->show_sign +
+				opt->space_before, opt->width, ' ');
+	}
+	else if (opt->precision > len && nbr < 0)
+		ret += fillnchar(opt->precision + 1, opt->width, ' ');
+	else if (opt->width > opt->precision && opt->width > len
+		&& nbr >= 0)
+		ret += fillnchar(opt->precision, opt->width, ' ');
+	if (opt->show_sign && !opt->fill_by_zero && nbr >= 0)
+		ret += write(1, "+", 1);
+	return (ret);
+}
+
+int		ft_s_right_neg(t_propt *opt, int *len, intmax_t *nbr)
+{
+	int ret;
+
+	ret = 0;
+	ret += ft_s_right_precision(opt, *len, *nbr);
+	if (opt->precision >= *len)
+	{
+		if (*nbr < 0)
+		{
+			ft_putchar('-');
+			*nbr = -*nbr;
+			ret++;
+			*len = *len - 1;
+		}
+		ret += fillnchar(*len, opt->precision, '0');
+	}
+	return (ret);
+}
+
 int		ft_s_width_right(t_propt *opt, int len, intmax_t nbr)
 {
 	int		ret;
@@ -27,43 +71,12 @@ int		ft_s_width_right(t_propt *opt, int len, intmax_t nbr)
 		}
 		else
 		{
-			if (opt->space_before)
-				ret += write(1, " ", 1);
-			else if (opt->show_sign && nbr >= 0)
-				ret += write(1, "+", 1);
+			ret += ft_print_s_pref(opt, nbr);
 			ret += fillnchar(len + ret, opt->width, '0');
 		}
 	}
 	else
-	{
-		if (opt->precision < len)
-			ret += fillnchar(len, opt->width, ' ');
-		else if (opt->precision > len && nbr >= 0)
-		{
-			if (opt->space_before)
-				ret += write(1, " ", 1);
-			ret += fillnchar(opt->precision + opt->show_sign +
-					opt->space_before, opt->width, ' ');
-		}
-		else if (opt->precision > len && nbr < 0)
-			ret += fillnchar(opt->precision + 1, opt->width, ' ');
-		else if (opt->width > opt->precision && opt->width > len
-				&& nbr >= 0)
-			ret += fillnchar(opt->precision, opt->width, ' ');
-		if (opt->show_sign && !opt->fill_by_zero && nbr >= 0)
-			ret += write(1, "+", 1);
-		if (opt->precision >= len)
-		{
-			if (nbr < 0)
-			{
-				ft_putchar('-');
-				nbr = -nbr;
-				ret++;
-				len--;
-			}
-			ret += fillnchar(len, opt->precision, '0');
-		}
-	}
+		ret += ft_s_right_neg(opt, &len, &nbr);
 	print_sdec(nbr);
 	ret += len;
 	return (ret);
@@ -74,10 +87,7 @@ int		ft_s_width_left(t_propt *opt, int len, intmax_t nbr)
 	int ret;
 
 	ret = 0;
-	if (opt->space_before && nbr > 0)
-		ret += write(1, " ", 1);
-	else if (opt->show_sign && nbr >= 0)
-		ret += write(1, "+", 1);
+	ret += ft_print_s_pref(opt, nbr);
 	if (opt->precision > len)
 	{
 		if (nbr < 0)
@@ -90,31 +100,6 @@ int		ft_s_width_left(t_propt *opt, int len, intmax_t nbr)
 	print_sdec(nbr);
 	ret += len;
 	ret += fillnchar(ret, opt->width, ' ');
-	return (ret);
-}
-
-int		ft_s_no_width(t_propt *opt, int len, intmax_t nbr)
-{
-	int ret;
-
-	ret = 0;
-	if (opt->space_before && nbr > 0)
-		ret += write(1, " ", 1);
-	else if (opt->show_sign && nbr >= 0)
-		ret += write(1, "+", 1);
-	if (opt->precision > len)
-	{
-		if (nbr < 0)
-		{
-			ft_putchar('-');
-			nbr = -nbr;
-			len--;
-			ret++;
-		}
-		ret += fillnchar(len, opt->precision, '0');
-	}
-	print_sdec(nbr);
-	ret += len;
 	return (ret);
 }
 
