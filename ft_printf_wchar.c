@@ -39,7 +39,7 @@ int		ft_nb_bytes(int n)
 
 int		ft_putwchar(wint_t wc)
 {
-	char	tmp[4];
+	char	tmp[4] = {0, 0, 0, 0};
 	int		bytes;
 
 	bytes = ft_nb_bytes(ft_nb_bits(wc));
