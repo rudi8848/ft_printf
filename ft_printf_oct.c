@@ -64,7 +64,7 @@ ssize_t	ft_printf_putnbr_oct(char **ft, va_list *arg, t_propt *opt, int *res)
 
 	ret = 0;
 	if (!ft)
-		exit(ERROR);
+		exit(EXIT_FAILURE);
 	nbr = ft_cut_unsigned(arg, opt);
 	if (!nbr && opt->is_set_precision && !opt->precision &&
 			!opt->show_prefix)

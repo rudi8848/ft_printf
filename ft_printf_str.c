@@ -53,7 +53,7 @@ ssize_t	ft_printf_putstr(char **fmt, va_list *args, t_propt *options, int *res)
 	ret = 0;
 	len = 0;
 	if (!fmt || !options)
-		exit(ERROR);
+		exit(EXIT_FAILURE);
 	str = (char*)va_arg(*args, const char*);
 	tmp = NULL;
 	if (str)
@@ -76,15 +76,18 @@ int		ft_printf_wstr_precision(wchar_t *wstr, t_propt *options, int *res)
 	if (options->fill_by_zero)
 	{
 		if (options->precision)
-			ret += fillnchar(0, options->precision, '0');
+			ret += fillnchar(0, options->precision - ft_wstrlen(wstr), '0');
 		else
-			ret += fillnchar(0, options->width, '0');
+			ret += fillnchar(0, options->width - ft_wstrlen(wstr), '0');
 	}
-	while (ret < options->precision)
-	{
-		ret += ft_putwchar(wstr[i]);
-		i++;
-	}
+	else if (options->width > (int)ft_wstrlen(wstr) && !options->left_align)
+		ret += fillnchar(0, options->width - ft_wstrlen(wstr), ' ');
+	if (options->is_set_precision)
+		ret += ft_putwstr_prec(wstr, options);
+	else
+		ret += ft_putwstr(wstr);
+	if (options->left_align && options->width > (int)ft_wstrlen(wstr))
+		ret += fillnchar(0, options->width - ft_wstrlen(wstr), ' ');
 	*res += ret;
 	return (ret);
 }
@@ -98,21 +101,17 @@ ssize_t	print_wstr(char **fmt, va_list *args, t_propt *options, int *res)
 	i = 0;
 	ret = 0;
 	if (!fmt || !options)
-		exit(ERROR);
+		exit(EXIT_FAILURE);
 	wstr = (wchar_t *)va_arg(*args, wchar_t*);
 	if (!wstr)
 	{
 		*res += ft_print_null_string();
 		return (6);
 	}
-	if (options->is_set_precision)
+	if (options->is_set_precision || options->width > (int)ft_wstrlen(wstr))
 		return (ft_printf_wstr_precision(wstr, options, res));
 	else
-		while (wstr[i] != L'\0')
-		{
-			ret += ft_putwchar(wstr[i]);
-			i++;
-		}
+		ret += ft_putwstr(wstr);
 	*res += ret;
 	return (ret);
 }

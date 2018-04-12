@@ -1,27 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*   ft_printf_wstr_help.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/06 15:57:16 by gvynogra          #+#    #+#             */
-/*   Updated: 2017/11/06 15:57:34 by gvynogra         ###   ########.fr       */
+/*   Created: 2018/04/12 11:33:58 by gvynogra          #+#    #+#             */
+/*   Updated: 2018/04/12 11:34:00 by gvynogra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/libft.h"
+#include "includes/ft_printf.h"
 
-void	ft_putendl_fd(char const *s, int fd)
+int		ft_putwstr(wchar_t *wstr)
 {
-	size_t		i;
+	int		i;
+	int		ret;
 
+	ret = 0;
 	i = 0;
-	if (s && fd)
+	while (wstr[i] != L'\0')
 	{
-		while (s[i])
-			i++;
-		write(fd, s, i);
-		write(fd, "\n", 1);
+		ret += ft_putwchar(wstr[i]);
+		i++;
 	}
+	return (ret);
+}
+
+int		ft_putwstr_prec(wchar_t *wstr, t_propt *options)
+{
+	int		i;
+	int		ret;
+
+	ret = 0;
+	i = 0;
+	while (ret < options->precision)
+	{
+		ret += ft_putwchar(wstr[i]);
+		i++;
+	}
+	return (ret);
 }

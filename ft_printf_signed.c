@@ -111,7 +111,7 @@ ssize_t	ft_printf_putnbr_sdec(char **fmt, va_list *args, t_propt *opt, int *res)
 
 	ret = 0;
 	if (!fmt)
-		exit(ERROR);
+		exit(EXIT_FAILURE);
 	nbr = ft_cut_signed(args, opt);
 	len = ft_snbr_length(&nbr, 10);
 	if (!nbr && opt->is_set_precision && !opt->precision)

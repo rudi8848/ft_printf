@@ -27,7 +27,7 @@ int				fillnchar(int len, int width, char c)
 	return (write(1, str, i));
 }
 
-t_pf			ft_choose_type(e_conv conv, t_propt *options)
+t_pf			ft_choose_type(t_conv conv, t_propt *options)
 {
 	static t_pf *convert_functions;
 
