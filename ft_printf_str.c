@@ -46,20 +46,16 @@ int		ft_putstr_arg(char *str, char *tmp, t_propt *options, int *res)
 ssize_t	ft_printf_putstr(char **fmt, va_list *args, t_propt *options, int *res)
 {
 	int		len;
-	int		ret;
 	char	*str;
 	char	*tmp;
 
-	ret = 0;
 	len = 0;
 	if (!fmt || !options)
 		exit(EXIT_FAILURE);
 	str = (char*)va_arg(*args, const char*);
 	tmp = NULL;
 	if (str)
-	{
 		len = ft_putstr_arg(str, tmp, options, res);
-	}
 	else
 		(options->width && options->is_set_precision) ? (*res += fillnchar(0,
 			options->width, '0')) : (*res += ft_print_null_string());
@@ -69,9 +65,7 @@ ssize_t	ft_printf_putstr(char **fmt, va_list *args, t_propt *options, int *res)
 int		ft_printf_wstr_precision(wchar_t *wstr, t_propt *options, int *res)
 {
 	int ret;
-	int i;
 
-	i = 0;
 	ret = 0;
 	if (options->fill_by_zero)
 	{
@@ -94,11 +88,9 @@ int		ft_printf_wstr_precision(wchar_t *wstr, t_propt *options, int *res)
 
 ssize_t	print_wstr(char **fmt, va_list *args, t_propt *options, int *res)
 {
-	int		i;
 	wchar_t	*wstr;
 	int		ret;
 
-	i = 0;
 	ret = 0;
 	if (!fmt || !options)
 		exit(EXIT_FAILURE);

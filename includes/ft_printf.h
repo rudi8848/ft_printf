@@ -39,7 +39,7 @@ typedef struct	s_options
 	int			len_z;
 }				t_propt;
 
-typedef ssize_t(*t_pf)(char **, va_list*, t_propt*, int *res);
+typedef ssize_t(*t_pf)(char **fmt, va_list *args, t_propt *opt, int *res);
 typedef enum
 {
 	CONV_s = 's',
@@ -89,7 +89,7 @@ ssize_t			ft_printf_putnbr_sdec(char **f, va_list *a, t_propt *o, int *r);
 ssize_t			ft_printf_putnbr_udec(char **f, va_list *a, t_propt *o, int *r);
 void			ft_set_array(t_pf *convert_functions);
 t_pf			ft_choose_type(t_conv conv, t_propt *opt);
-ssize_t			ft_parse_opt(const char **format, va_list *arg, int *res);
+ssize_t			ft_parse_options(const char **fmt, va_list *arg, int *res);
 void			print_hex(uintmax_t n, char a);
 void			print_oct(uintmax_t n);
 void			print_sdec(intmax_t n);

@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/08/07 10:12:06 by gvynogra          #+#    #+#              #
-#    Updated: 2017/12/25 15:12:43 by gvynogra         ###   ########.fr        #
+#    Created: 2018/04/12 13:30:33 by gvynogra          #+#    #+#              #
+#    Updated: 2018/04/12 13:30:43 by gvynogra         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 $(NAME): $(SRCS) $(OBJS)
-	gcc -Wall -Wextra -Werror -c $(SRCS) -g3
+	gcc -Wall -Wextra -Werror -c $(SRCS)
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 

@@ -22,9 +22,7 @@ char			*ft_strdup(const char *src)
 	if (!dest)
 		return (NULL);
 	if (src == NULL)
-	{
 		return (0);
-	}
 	while (i <= ft_strlen(src))
 	{
 		dest[i] = src[i];

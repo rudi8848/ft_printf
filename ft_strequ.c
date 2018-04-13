@@ -24,9 +24,7 @@ int		ft_strequ(char const *s1, char const *s2)
 		t2 = (char*)s2;
 		i = 0;
 		while (t1[i] == t2[i] && t1[i] && t2[i])
-		{
 			i++;
-		}
 		if (t1[i] - t2[i] == 0)
 			return (1);
 	}

@@ -6,70 +6,52 @@
 /*   By: gvynogra <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/06 15:45:06 by gvynogra          #+#    #+#             */
-/*   Updated: 2017/11/06 15:45:32 by gvynogra         ###   ########.fr       */
+/*   Updated: 2018/04/13 10:53:05 by gvynogra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/libft.h"
 
-static	void	reverse(char *s, int len)
+int		ft_len(int nbr)
 {
-	int		i;
-	int		j;
-	char	c;
+	int			i;
+	unsigned	nb;
 
 	i = 0;
-	j = len - 1;
-	while (i < j)
-	{
-		c = s[i];
-		s[i] = s[j];
-		s[j] = c;
-		i++;
-		j--;
-	}
-}
-
-static int		ft_len(int nb)
-{
-	int len;
-
-	len = 1;
-	while (nb /= 10)
-		len++;
-	return (len);
-}
-
-static	int		ft_isnegative(int n)
-{
-	if (n < 0)
+	if (nbr < 0)
+		nb = -nbr;
+	else if (nbr == 0)
 		return (1);
-	return (0);
+	else
+		nb = nbr;
+	while (nb > 0)
+	{
+		nb /= 10;
+		i++;
+	}
+	return (i);
 }
 
-char			*ft_itoa(int n)
+char	*ft_itoa(int value)
 {
-	char	*str;
-	int		i;
-	int		nbr;
+	char		*nbr;
+	int			neg;
+	int			len;
+	unsigned	res;
 
-	i = 0;
-	nbr = n;
-	if (nbr == -2147483648)
-		return (ft_strdup("-2147483648"));
-	if (!(str = (char*)malloc(sizeof(char) *
-					ft_len(n) + 1 + ft_isnegative(n))))
+	len = ft_len(value);
+	res = (value < 0) ? -value : value;
+	neg = (value < 0) ? 1 : 0;
+	nbr = (char*)malloc(sizeof(char) * len + neg + 1);
+	if (!nbr)
 		return (NULL);
-	if (ft_isnegative(n))
-		nbr = -nbr;
-	while (i < ft_len(n))
+	nbr[len + neg] = '\0';
+	while (len-- > 0)
 	{
-		str[i++] = nbr % 10 + '0';
-		nbr /= 10;
+		nbr[len + neg] = (res % 10) + '0';
+		res = res / 10;
 	}
-	if (ft_isnegative(n))
-		str[i++] = '-';
-	str[i] = '\0';
-	reverse(str, ft_len(n) + ft_isnegative(n));
-	return (str);
+	if (neg)
+		nbr[0] = '-';
+	return (nbr);
 }
